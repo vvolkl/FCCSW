@@ -22,6 +22,8 @@ gaudi_add_module(Generation
 
 install(DIRECTORY ${CMAKE_CURRENT_LIST_DIR}/data DESTINATION Generation)
 
+gaudi_add_dictionary(Generation Generation/IPileUpTool.h Generation/selection.xml)
+
 include(CTest)
 
 gaudi_add_test(particleGun
