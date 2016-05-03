@@ -18,6 +18,8 @@ gaudi_add_library(FWCore
                   INCLUDE_DIRS FCCEDM PODIO
                   PUBLIC_HEADERS FWCore)
 
+gaudi_add_dictionary(FWCore FWCore/PodioDataSvc.h FWCore/selection.xml LINK_LIBRARIES FWCore)
+
 gaudi_add_module(FWCorePlugins
                  src/components/*.cpp
                  LINK_LIBRARIES GaudiAlgLib GaudiKernel FWCore ROOT)
