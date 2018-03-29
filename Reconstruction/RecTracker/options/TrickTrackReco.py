@@ -16,6 +16,7 @@ parser.add_argument('--legacyCollectionNames', action="store_true",  help='use o
 parser.add_argument('--overlayCollectionNames', action="store_true",  help='use old collection names')
 parser.add_argument('--trajectories', action="store_true",  help='read trajectories')
 parser.add_argument('--truthseeding', action="store_true",  help='use truth seeding toolG')
+parser.add_argument('--recoHelix', action="store_true",  help='run recoHelix')
 
 args, _ = parser.parse_known_args()
 
@@ -163,6 +164,7 @@ RecTrackAlg.OutputLevel = DEBUG
 
 
 
+
 from Configurables import PodioOutput
 out = PodioOutput("out",
                    filename=args.outputfile,
@@ -173,6 +175,11 @@ out.outputCommands = ["keep *"]
 RecTrackAlg.AuditExecute = True
 out.AuditExecute = True
 algList += [RecTrackAlg]
+if args.recoHelix:
+  from Configurables import RecHelixTrajectory
+  rht = RecHelixTrajectory()
+  rht.AuditExecute = True
+  algList += [rht]
 algList += [out]
 
 from Configurables import ApplicationMgr
@@ -180,5 +187,5 @@ ApplicationMgr( TopAlg =  algList,
                 EvtSel = 'NONE',
                 EvtMax   = args.nevents,
                 ExtSvc = [podioevent],
-                OutputLevel=INFO,
+                OutputLevel=DEBUG,
  )

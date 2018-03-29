@@ -1,5 +1,5 @@
-#ifndef RECTRACKER_COMBINATORIALSEEDINGTEST_H
-#define RECTRACKER_COMBINATORIALSEEDINGTEST_H
+#ifndef RECTRACKER_RECTRACKALG_H
+#define RECTRACKER_RECTRACKALG_H
 
 // GAUDI
 #include "GaudiAlg/GaudiAlgorithm.h"
@@ -18,10 +18,12 @@ class TrackHitCollection;
 class TrackCollection;
 class TrackStateCollection;
 class PositionedTrackHitCollection;
+class ParticleCollection;
 }
 
-/*** @class RecTrackAlg
- *
+/***
+ * Main track reconstruction algorithm, turning hits to track in a seeding and fitting stage.
+ *  Uses tools to allow different implementation to do the actual work.
  */
 class RecTrackAlg : public GaudiAlgorithm {
 public:
@@ -40,6 +42,7 @@ private:
   DataHandle<fcc::PositionedTrackHitCollection> m_positionedTrackHits{"TrackerPositionedHits", Gaudi::DataHandle::Reader,
                                                                       this};
   DataHandle<fcc::TrackCollection> m_tracks{"Tracks", Gaudi::DataHandle::Writer, this};
+  DataHandle<fcc::ParticleCollection> m_recParticles{"TrackRecoParticles", Gaudi::DataHandle::Writer, this};
   DataHandle<fcc::TrackStateCollection> m_trackStates{"TrackStates", Gaudi::DataHandle::Writer, this};
   /// Handle to Track Seeding Tool that does the work
   ToolHandle<ITrackSeedingTool> m_trackSeedingTool{"CombinatorialSeedingTool/CombinatorialSeedingTool", this};
@@ -47,4 +50,4 @@ private:
   ToolHandle<ITrackFittingTool> m_trackFittingTool{"RiemannFitTool/RiemannFitTool", this};
 };
 
-#endif /* RECTRACKER_COMBINATORIALSEEDINGTEST_H */
+#endif /* RECTRACKER_RECTRACKALG_H */

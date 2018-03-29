@@ -48,20 +48,30 @@ std::pair<fcc::TrackCollection*, fcc::TrackStateCollection*> RiemannFitTool::fit
 	for(auto it1 = seedmap.begin(); it1 != seedmap.end(); it1 = range.second){
     tricktrack::Matrix3xNd riemannHits = tricktrack::Matrix3xNd::Zero(3, nhits);
     auto track = tracks->create();
-    track.bits((*it1).first);
     auto trackState = trackStates->create();
     unsigned int hitCounter = 0;
 		// Get the range of the current TrackID
     range = seedmap.equal_range(it1->first);
 
+     int l_trackId = (*theHits)[(*it1).second].core().bits;
 		// Go through the range
 		for(auto it2 = range.first; it2 != range.second; ++it2){
       //track.addhits((*theHits)[(*it2).second]); // TODO: reenable once new edm version available
+      
+
+      if (l_trackId != (*theHits)[(*it2).second].core().bits) {
+        l_trackId = -1;
+      }
       auto pos = (*theHits)[(*it2).second].position();
       if (hitCounter < nhits) {
         riemannHits.col(hitCounter) << pos.x, pos.y, pos.z;
       }
       hitCounter++;
+    }
+    if (l_trackId > 0) {
+      track.bits(l_trackId);
+    } else {
+      track.bits(0);
     }
     if (m_doFit) {
       if ((!m_fitOnlyPrimary) || (*it1).first == 1) {
@@ -93,7 +103,7 @@ std::pair<fcc::TrackCollection*, fcc::TrackStateCollection*> RiemannFitTool::fit
         trackState.phi(h.par(0));
         trackState.d0(h.par(1));
         trackState.qOverP(h.q / h.par(2));  // fit outputs pT
-        trackState.theta(h.par(3));         // fit outputs cotTheta
+        trackState.theta(std::atan(1. / h.par(3)));         // fit outputs cotTheta
         trackState.z0(h.par(4));
         track.addstates(trackState);
       }
