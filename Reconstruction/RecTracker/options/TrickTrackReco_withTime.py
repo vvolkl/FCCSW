@@ -136,7 +136,7 @@ from Configurables import TrickTrackSeedingTool
 tricktrack_seed_tool = TrickTrackSeedingTool()
 tricktrack_seed_tool.LayerGraphTool = layergraphtool
 tricktrack_seed_tool.deltaZ=860
-tricktrack_seed_tool.deltaT=3000000.0
+tricktrack_seed_tool.deltaT=15.
 tricktrack_seed_tool.deltaPhi=0.05
 tricktrack_seed_tool.seedingLayerIndices = [[0, 0], [0,1], [0,2], [0,3], [2,0], [2,2], [2,4], [2,6], [2,1],[2,3],[2,5],[2,7],[2,9],[2,8]]
 
