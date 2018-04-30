@@ -56,7 +56,7 @@ std::pair<fcc::TrackCollection*, fcc::TrackStateCollection*> RiemannFitTool::fit
      int l_trackId = (*theHits)[(*it1).second].core().bits;
 		// Go through the range
 		for(auto it2 = range.first; it2 != range.second; ++it2){
-      track.addhits((*theHits)[(*it2).second]); // TODO: reenable once new edm version available
+      //track.addhits((*theHits)[(*it2).second]); // TODO: reenable once new edm version available
       
 
       if (l_trackId != (*theHits)[(*it2).second].core().bits) {
