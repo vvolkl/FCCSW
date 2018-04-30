@@ -2,6 +2,7 @@
 import os
 import sys
 import matplotlib
+matplotlib.use("tkAgg")
 import ROOT
 import argparse
 from EventStore import EventStore
@@ -17,6 +18,7 @@ parser.add_argument("--no_process_hits", action="store_true", help="process hits
 parser.add_argument("--no_process_tracks", action="store_true", help="process tracks from edm file")
 parser.add_argument("--no_process_genparticles", action="store_true", help="process genparticles from edm file")
 parser.add_argument("--no_process_trajectories", action="store_true", help="process trajectores from edm file")
+parser.add_argument("--no_process_rechelix", action="store_true", help="process trajectores from edm file")
 parser.add_argument("--plot_event", help="event for which to create plot", nargs="+", type=int, default=0)
 parser.add_argument("--rCut", help="rcut determining whether hits are drawn", type=float, default=800)
 parser.add_argument("--zCut", help="zcut determining whether hits are drawn", type=float, default=2000)
@@ -141,12 +143,12 @@ for i in args.plot_event:
 
       if not args.no_process_tracks:
         print "processing trackStates ..."
-        trackStates = store.get("trackStates")
+        trackStates = store.get("TrackStates")
         print len(trackStates)
         for ts in trackStates:
             pass
         print "processing tracks ..."
-        tracks = store.get('tracks')
+        tracks = store.get('Tracks')
         trackCounter = 0
         for t in tracks:
               if t.bits() == 1 or True:
@@ -174,6 +176,7 @@ for i in args.plot_event:
                 plt.figure("rz")
                 plt.plot(pos[:,2], np.sqrt(pos[:,0]**2 + pos[:,1]**2), '--', color="black", label="Track Seed" if trackCounter == 0 else None)
                 trackCounter +=1
+                """
 
                 helix_points = helix(trackparams)
                 pos = np.array(helix_points)
@@ -181,6 +184,7 @@ for i in args.plot_event:
                 plt.plot(pos[:,0],pos[:,1], '--', color="magenta", label="Track Helix" if trackCounter == 0 else None)
                 plt.figure("rz")
                 plt.plot(pos[:,2], np.sqrt(pos[:,0]**2 + pos[:,1]**2), '--', color="magenta", label="Track Seed" if trackCounter == 0 else None)
+                """
 
       if not args.no_process_trajectories:
         plt.figure("xy")
@@ -202,6 +206,27 @@ for i in args.plot_event:
           plt.plot(pf[:,0],pf[:,1], '-', color="green", alpha=0.3)#, label="MCTruth trajectory")
           plt.figure("rz")
           plt.plot(pf[:,2], np.sqrt(pf[:,0]**2 + pf[:,1]**2), '-', color="green", alpha=0.3)#, label="MCTruth trajectory")
+
+      if not args.no_process_rechelix:
+        plt.figure("xy")
+        print "processing recHelix ..."
+        clusters = store.get('RecHelixPoints')
+        pos = []
+        for c in clusters:
+              #print "trajectory ID: ", c.bits()
+              cor = c.position()
+              if c.bits() in filter_trajectories or True:
+                pos.append([cor.x, cor.y, cor.z, c.bits()])
+        p = np.array(pos)
+        p =  p[(np.linalg.norm(p[:,:2], axis=1) < args.rCut)]
+        p = p[np.abs(p[:,2]) < args.zCut] 
+        for _id in np.unique(p[:,3]):
+          maxpoints = -1
+          pf = p[p[:,3] == _id]
+          plt.figure("xy")
+          plt.plot(pf[:,0],pf[:,1], '--', color="purple", alpha=0.3)#, label="MCTruth trajectory")
+          plt.figure("rz")
+          plt.plot(pf[:,2], np.sqrt(pf[:,0]**2 + pf[:,1]**2), '--', color="purple", alpha=0.3)#, label="MCTruth trajectory")
 
       if not args.no_process_hits:
         print "processing hits ..."
