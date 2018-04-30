@@ -12,10 +12,7 @@ namespace dd4hep {
 namespace fcc {
  class TrackHitCollection;
  class TrackHit;
- 
 }
-
-
 
 namespace rec {
 /// fill vector with hits ordered according to the CellIdOrder struct
