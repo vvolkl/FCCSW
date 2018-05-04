@@ -27,12 +27,14 @@
 fcc::Particle TrackState2Particle(fcc::Track aTrack) {
   fcc::Particle theParticle;
   theParticle.bits(aTrack.bits());
-  auto aState = aTrack.states(0);
-  theParticle.charge((aState.qOverP() > 0) - (aState.qOverP() < 0));
-  auto& p4 = theParticle.p4();
-  p4.px = 1. / std::abs(aState.qOverP()) * std::cos(aState.phi());
-  p4.py = 1. / std::abs(aState.qOverP()) * std::sin(aState.phi());
-  p4.pz = std::tan(aState.theta()) * 1 / std::abs(aState.qOverP());
+  if (aTrack.states_size() > 0) {
+    auto aState = aTrack.states(0);
+    theParticle.charge((aState.qOverP() > 0) - (aState.qOverP() < 0));
+    auto& p4 = theParticle.p4();
+    p4.px = 1. / std::abs(aState.qOverP()) * std::cos(aState.phi());
+    p4.py = 1. / std::abs(aState.qOverP()) * std::sin(aState.phi());
+    p4.pz = std::tan(aState.theta()) * 1 / std::abs(aState.qOverP());
+  }
 
 
   return theParticle;
