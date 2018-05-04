@@ -16,7 +16,6 @@
 
 
 
-
 using Hit = tricktrack::TTPoint; 
 
 using namespace tricktrack;
@@ -40,7 +39,7 @@ StatusCode RiemannFitTool::initialize() {
 
 std::pair<fcc::TrackCollection*, fcc::TrackStateCollection*> RiemannFitTool::fitTracks(const fcc::PositionedTrackHitCollection* theHits, std::multimap<unsigned int, unsigned int> seedmap) {
 
-  constexpr unsigned int nhits = 32;
+  constexpr unsigned int nhits = 22;
   fcc::TrackCollection* tracks = new fcc::TrackCollection();
   fcc::TrackStateCollection* trackStates = new fcc::TrackStateCollection();
 

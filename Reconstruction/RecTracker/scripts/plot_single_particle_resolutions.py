@@ -113,7 +113,16 @@ print etas
 print pts
 
 
-colors = {1.: "black", 2: "darkblue", 5.: "blue", 100.: "green", 1000: "magenta", 10000.: "darkgreen", 10.: "red"}
+colors = {
+      1.: "black",
+      2: "darkblue",
+      5.: "blue",
+      10.: "red",
+      100.: "green",
+      1000: "magenta",
+      10000.: "darkgreen"
+    }
+root_graphs = {}
 for e in np.unique(l_true_pts):
   print "pT: ", e
   i = np.array(l_true_pts) == e
@@ -145,6 +154,8 @@ for e in np.unique(l_true_pts):
   bin_width = (bin_edges[1] - bin_edges[0])
 
   plt.errorbar(x=bin_centers, y=means, xerr=bin_width, linestyle='-', marker='.', color=colors[e])
+  root_graph[e] = ROOT.TGraph(len(bin_centers), bin_centers, means)
+
 
 plt.figure("pt_res")
 plt.xlabel(r"$\eta$")
@@ -179,3 +190,4 @@ for fig in figs:
   fig.savefig(os.path.join(args.plotprefix, f + "_" + fig._label + ".png"))
 
 plt.show()
+print root_graph[e]
