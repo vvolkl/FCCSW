@@ -71,6 +71,10 @@ StatusCode RecTrackAlg::execute() {
   for (auto track: (*tracksAndTrackstates.first)) {
     auto p =  m_recParticleColl->create();
     p = TrackState2Particle(track);
+    auto pEdm = m_recParticleColl->create();
+    pEdm.bits(p.bits());
+    pEdm.charge(p.charge());
+    pEdm.p4(p.p4());
   }
   m_tracks.put(tracksAndTrackstates.first);
   m_trackStates.put(tracksAndTrackstates.second);

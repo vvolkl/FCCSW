@@ -8,10 +8,14 @@ namespace tricktrack {
 class CMGraph;
 }
 
+/** \brief Construct the tricktrack graph specifying the seeding layers
+ *
+ */ 
 class ILayerGraphTool : virtual public IAlgTool {
 public:
   DeclareInterfaceID(ILayerGraphTool, 1, 0);
 
+  /// construct and return the graph describing the seeding layers
   virtual tricktrack::CMGraph getGraph() = 0;
 };
 

@@ -30,6 +30,8 @@ public:
 
   virtual bool filter(fcc::TrackHit hit) override final;
   virtual void setIds(unsigned int systemId, unsigned int layerId) override final;
+  /// in this implementation the more specific setIds is used
+  virtual void setState(std::vector<double> params) override final {};
 private:
 
   unsigned int m_layerId = 0;

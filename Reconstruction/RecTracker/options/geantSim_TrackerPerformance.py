@@ -24,8 +24,6 @@ import sys
 
 
 singlePartGroup.add_argument('--pt',  type=float, nargs="+", help="list of pt values [MeV]!!!")
-ptList=[1*units.GeV, 2*units.GeV,5 * units.GeV,10*units.GeV, 100*units.GeV, 1000*units.GeV, 10000*units.GeV]
-
 singlePartGroup.add_argument('--discretePtSpectrum', action="store_true", help='use continuous pt spectrum')
 singlePartGroup.add_argument('--linSpacedPt', action="store_true", help='use logspaced pt spectrum')
 singlePartGroup.add_argument('--ptMin', type=float, default=500., help='Minimal pt')
@@ -38,7 +36,7 @@ singlePartGroup.add_argument('--particle', type=int, required='--singlePart' in 
 singlePartGroup.add_argument('--trajectories', action="store_true", help='store trajectories for tracks, WARNING: big datavol!')
 
 pythiaGroup = simparser.add_argument_group('Pythia','Common for min bias and LHE')
-pythiaGroup.add_argument('-c', '--card', type=str, default='Generation/data/Pythia_minbias_pp_100TeV.cmd', help='Path to Pythia card (default: PythiaCards/default.cmd)')
+pythiaGroup.add_argument('-c', '--card', type=str, default='Generation/data/Pythia_minbias_pp_100TeV.cmd', help='Path to Pythia card')
 
 simargs, _ = simparser.parse_known_args()
 
@@ -93,7 +91,7 @@ from GaudiKernel import SystemOfUnits as units
 ##############################################################################################################
 #######                                         GEOMETRY                                         #############
 ##############################################################################################################
-path_to_detector = simargs.pathToDetector #"/afs/cern.ch/work/v/vavolkl/public/fcc.cern.ch/sw/pre0.9.1/FCCSW/InstallArea/" #TODO: update with cvmfs installation
+path_to_detector = simargs.pathToDetector
 
 if simargs.tripletTracker:
   detectors_to_use=[path_to_detector+'Detector/DetFCChhBaseline1/compact/FCChh_DectEmptyTracker.xml',
@@ -133,11 +131,8 @@ if simargs.geantinos:
   from Configurables import SimG4UserLimitRegion, SimG4UserLimitPhysicsList
   regiontool = SimG4UserLimitRegion("limits", volumeNames=["InnerBRL", "OuterBRL"],
                                                      maxStep = 0.1*units.mm)
-    #"InnerECAP", "OuterBRL", "OuterECAP", "FwdECAP"],
-  # create overlay on top of FTFP_BERT physics list, attaching fast sim/parametrization process
   physicslist = SimG4UserLimitPhysicsList("Physics", fullphysics="SimG4GeantinoDeposits")
   regions = [regiontool]
-  #regions = []
   physicslist = "SimG4GeantinoDeposits"
 else:
   physicslist = "SimG4FtfpBert"
@@ -227,15 +222,6 @@ podioevent = FCCDataSvc("EventDataSvc")
 out = PodioOutput("out")
 
 out.outputCommands = ["keep *"]
-#out.outputCommands = ["drop *",
-#                      "keep GenParticles",
-#                      "keep GenVertices",
-#                      "keep SimParticles",
-#                      "keep SimVertices",
-#                      "keep TrackerHits",
-#                      "keep TrackerPositionedHits",
-#                      "keep TrackerDigiPostPoint",
-#                      ]
 out.filename = output_name
 
 #CPU information

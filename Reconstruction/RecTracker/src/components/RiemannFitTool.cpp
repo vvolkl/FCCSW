@@ -103,7 +103,8 @@ std::pair<fcc::TrackCollection*, fcc::TrackStateCollection*> RiemannFitTool::fit
         trackState.phi(h.par(0));
         trackState.d0(h.par(1));
         trackState.qOverP(h.q / h.par(2));  // fit outputs pT
-        trackState.theta(std::atan(1. / h.par(3)));         // fit outputs cotTheta
+        //trackState.theta(std::atan(1. / h.par(3)));         // fit outputs cotTheta
+        trackState.theta(h.par(3));
         trackState.z0(h.par(4));
         track.addstates(trackState);
       }

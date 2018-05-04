@@ -9,12 +9,12 @@
   </includes>
 
   <info name="FCCDectMaster"
-    title="master file with includes and world dimension"
-    author="C. Helsens"
+    title="master file with includes and world dimension, tailored to Tracker"
+    author="V. Volkl"
     url="no"
     status="development"
     version="1.0">
-    <comment>Use this one if you want to use official dimensions but only place one detector inside</comment>
+    <comment>Use this one for a world volume that just fits the hh tracker</comment>
   </info>
   <define>
     <constant name="world_size" value="18*m"/>
