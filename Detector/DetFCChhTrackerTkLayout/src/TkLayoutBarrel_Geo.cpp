@@ -72,6 +72,17 @@ static dd4hep::Ref_t createTkLayoutTrackerBarrel(dd4hep::Detector& lcdd,
     integratedModuleComponentThickness = 0;
     int moduleCounter = 0;
     Volume moduleVolume;
+    // store the materials of each tracking module for tracking geometry
+    std::vector<std::pair<dd4hep::Material, double>> compMaterials;
+    // go through all components to collect the material to later attach it to the modoule
+    for (dd4hep::xml::Collection_t xModuleComponentOddColl(xModuleComponentsOdd, _U(component));
+         nullptr != xModuleComponentOddColl;
+         ++xModuleComponentOddColl) {
+      dd4hep::xml::Component xModuleComponentOdd = static_cast<dd4hep::xml::Component>(xModuleComponentOddColl);
+      compMaterials.push_back(
+          std::make_pair(lcdd.material(xModuleComponentOdd.materialStr()), xModuleComponentOdd.thickness()));
+    }
+
     for (dd4hep::xml::Collection_t xModuleComponentOddColl(xModuleComponentsOdd, _U(component));
          nullptr != xModuleComponentOddColl;
          ++xModuleComponentOddColl) {
@@ -110,6 +121,11 @@ static dd4hep::Ref_t createTkLayoutTrackerBarrel(dd4hep::Detector& lcdd,
             moduleVolume.setSensitiveDetector(sensDet);
             DetElement mod_det(lay_det, "module" + std::to_string(moduleCounter), moduleCounter);
             mod_det.setPlacement(placedModuleVolume);
+
+            // Acts extensions for the modules, with material info
+            Acts::ActsExtension* moduleExtension = new Acts::ActsExtension(compMaterials);
+            mod_det.addExtension<Acts::IActsExtension>(moduleExtension);
+
             ++moduleCounter;
           }
         }
