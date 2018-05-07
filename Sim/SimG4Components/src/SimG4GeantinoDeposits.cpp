@@ -3,11 +3,83 @@
 // Geant4
 #include "G4VModularPhysicsList.hh"
 #include "G4Geantino.hh"
+#include "G4ChargedGeantino.hh"
 #include "G4VUserPhysicsList.hh"
 #include "G4VProcess.hh"
 #include "G4VContinuousProcess.hh"
 #include "G4ProcessManager.hh"
 #include "G4ProcessType.hh"
+
+
+ 
+ #include "G4SystemOfUnits.hh"
+ #include "G4ParticleTable.hh"
+
+ class G4ChargedGeantinoNegative : public G4ParticleDefinition
+ {
+  private:
+    static G4ChargedGeantinoNegative* theInstance;
+ 
+  private:
+   G4ChargedGeantinoNegative(){}
+ 
+  public:
+    ~G4ChargedGeantinoNegative(){}
+  
+    static G4ChargedGeantinoNegative* Definition();
+    static G4ChargedGeantinoNegative* ChargedGeantinoDefinition();
+    static G4ChargedGeantinoNegative* ChargedGeantino();
+ 
+ };
+ 
+ 
+ 
+ G4ChargedGeantinoNegative* G4ChargedGeantinoNegative::theInstance = 0;
+ 
+ G4ChargedGeantinoNegative*  G4ChargedGeantinoNegative::Definition() 
+ {
+   if (theInstance !=0) return theInstance;
+ 
+   const G4String name = "chargedgeantinonegative";
+   // search in particle table
+   G4ParticleTable* pTable = G4ParticleTable::GetParticleTable();
+   G4ParticleDefinition* anInstance = pTable->FindParticle(name);
+   if (anInstance ==0)
+   {
+   // create particle
+   //      
+   //    Arguments for constructor are as follows 
+   //               name             mass          width         charge
+   //             2*spin           parity  C-conjugation
+   //          2*Isospin       2*Isospin3       G-parity
+   //               type    lepton number  baryon number   PDG encoding
+   //             stable         lifetime    decay table 
+   //             shortlived      subType    anti_encoding
+    anInstance = new G4ParticleDefinition(
+                  name,         0.0*MeV,       0.0*MeV,   -1.*eplus, 
+                     0,               0,             0,          
+                     0,               0,             0,             
+            "geantino",               0,             0,           0,
+                  true,             0.0,          NULL,
+                  false,     "geantino",             0
+           );
+   }
+   theInstance = reinterpret_cast<G4ChargedGeantinoNegative*>(anInstance);
+   return theInstance;
+ }
+ 
+ 
+ G4ChargedGeantinoNegative*  G4ChargedGeantinoNegative::ChargedGeantinoDefinition() 
+ {
+   return Definition();
+ }
+ 
+ G4ChargedGeantinoNegative*  G4ChargedGeantinoNegative::ChargedGeantino() 
+ {
+   return Definition();
+ }
+ 
+
 
 
 
@@ -57,6 +129,8 @@ class GeantinoEnergyDepositList : public G4VModularPhysicsList {
 
   void ConstructParticle() {
     G4Geantino::GeantinoDefinition();
+    G4ChargedGeantino::ChargedGeantinoDefinition();
+    G4ChargedGeantinoNegative::ChargedGeantinoDefinition();
   }
 
   void SetCuts() {
