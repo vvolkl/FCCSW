@@ -20,7 +20,9 @@
 
 #include <map>
 
-
+/** @class FCChhSeedHitFilterTool
+ *  Checks if a hit belongs to a set of configurable seeding layers without using the dd4hep volumemanager
+ */
 class FCChhSeedHitFilterTool : public GaudiTool, virtual public IHitFilterTool {
 public:
   FCChhSeedHitFilterTool(const std::string& type, const std::string& name, const IInterface* parent);
