@@ -59,7 +59,7 @@ StatusCode ExtrapolationTest::initialize() {
   if (sc.isFailure()) return sc;
   // retrieve the extrapolation tool
   if (!m_extrapolationTool.retrieve()) {
-    error() << "Extrapolation tool cannot be retieved" << endmsg;
+    error() << "Extrapolation tool cannot be retrieved" << endmsg;
     return StatusCode::FAILURE;
   }
 
@@ -75,15 +75,15 @@ StatusCode ExtrapolationTest::execute() {
   // go through all particles to be extrapolated for this event
   for (const auto& mcparticle : *mcparticles) {
 
-      auto vertex = mcparticle.startVertex();
-      auto p4 = mcparticle.core().p4;
-      double phi = std::atan2(p4.py, p4.px);
-      double p3Mag = std::sqrt(std::pow(p4.px,2) + std::pow(p4.py,2) + std::pow(p4.pz,2));
+    auto vertex = mcparticle.startVertex();
+    auto p4 = mcparticle.core().p4;
+    double phi = std::atan2(p4.py, p4.px);
+    double p3Mag = std::sqrt(std::pow(p4.px,2) + std::pow(p4.py,2) + std::pow(p4.pz,2));
 
-      double theta = std::acos(p4.pz / p3Mag);
-      double qOverP = 1. / p3Mag * mcparticle.charge();
-      double d0 = 0;
-      double z0 = 0;
+    double theta = std::acos(p4.pz / p3Mag);
+    double qOverP = 1. / p3Mag * mcparticle.charge();
+    double d0 = 0;
+    double z0 = 0;
 
     auto theTrackState = fcc::TrackState(phi, theta, qOverP, d0, z0, vertex.position(), std::array<float, 15ul>());
     debug() << "start extrapolation ..." << endmsg;
