@@ -1,20 +1,20 @@
-#include "FastHitFilterTool.h"
+#include "FCChhSeedHitFilterTool.h"
 
 #include "datamodel/TrackHitCollection.h"
 
-DECLARE_TOOL_FACTORY(FastHitFilterTool)
+DECLARE_TOOL_FACTORY(FCChhSeedHitFilterTool)
 
-FastHitFilterTool::FastHitFilterTool(const std::string& type, const std::string& name, const IInterface* parent)
+FCChhSeedHitFilterTool::FCChhSeedHitFilterTool(const std::string& type, const std::string& name, const IInterface* parent)
     : GaudiTool(type, name, parent) {
   declareInterface<IHitFilterTool>(this);
 }
 
-StatusCode FastHitFilterTool::initialize() {
+StatusCode FCChhSeedHitFilterTool::initialize() {
   StatusCode sc = GaudiTool::initialize();
   return sc;
 }
 
-bool FastHitFilterTool::filter(fcc::TrackHit hit) {
+bool FCChhSeedHitFilterTool::filter(fcc::TrackHit hit) {
 
   if (m_systemId == 0 || m_systemId == 1) {  // barrel
     if (hit.core().cellId % 16 == m_systemId) {
@@ -33,9 +33,9 @@ bool FastHitFilterTool::filter(fcc::TrackHit hit) {
   return false;
 }
 
-void FastHitFilterTool::setIds(unsigned int systemId, unsigned int layerId) {
+void FCChhSeedHitFilterTool::setIds(unsigned int systemId, unsigned int layerId) {
   m_systemId = systemId;
   m_layerId = layerId;
 }
 
-StatusCode FastHitFilterTool::finalize() { return GaudiTool::finalize(); }
+StatusCode FCChhSeedHitFilterTool::finalize() { return GaudiTool::finalize(); }

@@ -109,8 +109,8 @@ podioevent   = FCCDataSvc("EventDataSvc", input=args.inputfile)
 
 
 # TrickTrack Seeding Configuration
-from Configurables import FastHitFilterTool
-hitfiltertool = FastHitFilterTool("FastHitFilterTool")
+from Configurables import FCChhSeedHitFilterTool
+hitfiltertool = FCChhSeedHitFilterTool("FCChhSeedHitFilterTool")
 
 from Configurables import FCChhSeedingGraphTool
 layergraphtool = FCChhSeedingGraphTool()

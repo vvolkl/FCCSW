@@ -1,5 +1,5 @@
-#ifndef RECTRACKER_DOUBLETCREATIONTOOL_H
-#define RECTRACKER_DOUBLETCREATIONTOOL_H
+#ifndef RECTRACKER_FCCHHSEEDHITFILTERTOOL_H
+#define RECTRACKER_FCCHHSEEDHITFILTERTOOL_H
 
 // from Gaudi
 #include "GaudiAlg/GaudiTool.h"
@@ -21,10 +21,10 @@
 #include <map>
 
 
-class FastHitFilterTool : public GaudiTool, virtual public IHitFilterTool {
+class FCChhSeedHitFilterTool : public GaudiTool, virtual public IHitFilterTool {
 public:
-  FastHitFilterTool(const std::string& type, const std::string& name, const IInterface* parent);
-  ~FastHitFilterTool() = default;
+  FCChhSeedHitFilterTool(const std::string& type, const std::string& name, const IInterface* parent);
+  ~FCChhSeedHitFilterTool() = default;
   virtual StatusCode initialize() override final;
   virtual StatusCode finalize() override final;
 
@@ -39,4 +39,4 @@ private:
 
 };
 
-#endif /* RECTRACKER_DOUBLETCREATIONTOOL_H */
+#endif /* RECTRACKER_FCCHHSEEDHITFILTERTOOL_H */

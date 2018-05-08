@@ -31,7 +31,7 @@ TrickTrackSeedingTool::TrickTrackSeedingTool(const std::string& type, const std:
   declareInterface<ITrackSeedingTool>(this);
   declareProperty("LayerGraphTool", m_layerGraphTool);
   declareTool(m_layerGraphTool, "BarrelLayerGraphTool4/LayerGraphTool");
-  declareTool(m_hitFilterTool, "FastHitFilterTool/FastHitFilterTool");
+  declareTool(m_hitFilterTool, "FCChhSeedHitFilterTool/FCChhSeedHitFilterTool");
 
 }
 
