@@ -8,7 +8,7 @@
     <gdmlFile  ref="../../DetCommon/compact/materials.xml"/>
   </includes>
 
-  <info name="FCCDectMaster"
+  <info name="FCChhDectEmptyTracker"
     title="master file with includes and world dimension, tailored to Tracker"
     author="V. Volkl"
     url="no"
