@@ -2,7 +2,7 @@
 import os
 import sys
 import matplotlib
-matplotlib.use("tkAgg")
+matplotlib.use("Agg")
 import ROOT
 import argparse
 from EventStore import EventStore
@@ -19,7 +19,7 @@ parser.add_argument("--no_process_tracks", action="store_true", help="process tr
 parser.add_argument("--no_process_genparticles", action="store_true", help="process genparticles from edm file")
 parser.add_argument("--no_process_trajectories", action="store_true", help="process trajectores from edm file")
 parser.add_argument("--no_process_rechelix", action="store_true", help="process trajectores from edm file")
-parser.add_argument("--plot_event", help="event for which to create plot", nargs="+", type=int, default=0)
+parser.add_argument("--plot_event", help="event for which to create plot", nargs="+", type=int, default=[0])
 parser.add_argument("--rCut", help="rcut determining whether hits are drawn", type=float, default=800)
 parser.add_argument("--zCut", help="zcut determining whether hits are drawn", type=float, default=2000)
 parser.add_argument("--rlimlow", help="event for which to create plot", type=float, default=0)
@@ -29,7 +29,7 @@ parser.add_argument("--zlimhigh", help="event for which to create plot", type=fl
 parser.add_argument("--nevents", help="max number of events to process", type=int, default=1000)
 parser.add_argument("--legacyCollectionNames", action="store_true",  help="create fake rate histograms", )
 parser.add_argument("--overlayCollectionNames", action="store_true",  help="create fake rate histograms", )
-parser.add_argument("--plotprefix", help="where to store the plots", type=str, default=os.environ["FCCPLOTS"])
+parser.add_argument("--plotprefix", help="where to store the plots", type=str, default=os.environ.get("FCCPLOTS", ""))
 args = parser.parse_args()
 
 # easily switch between different branch naming conventions
@@ -197,15 +197,16 @@ for i in args.plot_event:
               if c.bits() in filter_trajectories or True:
                 pos.append([cor.x, cor.y, cor.z, c.bits()])
         p = np.array(pos)
-        p =  p[(np.linalg.norm(p[:,:2], axis=1) < args.rCut)]
-        p = p[np.abs(p[:,2]) < args.zCut] 
-        for _id in np.unique(p[:,3]):
-          maxpoints = -1
-          pf = p[p[:,3] == _id]
-          plt.figure("xy")
-          plt.plot(pf[:,0],pf[:,1], '-', color="green", alpha=0.3)#, label="MCTruth trajectory")
-          plt.figure("rz")
-          plt.plot(pf[:,2], np.sqrt(pf[:,0]**2 + pf[:,1]**2), '-', color="green", alpha=0.3)#, label="MCTruth trajectory")
+        if p.size > 0:
+          p =  p[(np.linalg.norm(p[:,:2], axis=1) < args.rCut)]
+          p = p[np.abs(p[:,2]) < args.zCut] 
+          for _id in np.unique(p[:,3]):
+            maxpoints = -1
+            pf = p[p[:,3] == _id]
+            plt.figure("xy")
+            plt.plot(pf[:,0],pf[:,1], '-', color="green", alpha=0.3)#, label="MCTruth trajectory")
+            plt.figure("rz")
+            plt.plot(pf[:,2], np.sqrt(pf[:,0]**2 + pf[:,1]**2), '-', color="green", alpha=0.3)#, label="MCTruth trajectory")
 
       if not args.no_process_rechelix:
         plt.figure("xy")
@@ -218,15 +219,16 @@ for i in args.plot_event:
               if c.bits() in filter_trajectories or True:
                 pos.append([cor.x, cor.y, cor.z, c.bits()])
         p = np.array(pos)
-        p =  p[(np.linalg.norm(p[:,:2], axis=1) < args.rCut)]
-        p = p[np.abs(p[:,2]) < args.zCut] 
-        for _id in np.unique(p[:,3]):
-          maxpoints = -1
-          pf = p[p[:,3] == _id]
-          plt.figure("xy")
-          plt.plot(pf[:,0],pf[:,1], '--', color="purple", alpha=0.3)#, label="MCTruth trajectory")
-          plt.figure("rz")
-          plt.plot(pf[:,2], np.sqrt(pf[:,0]**2 + pf[:,1]**2), '--', color="purple", alpha=0.3)#, label="MCTruth trajectory")
+        if p.size > 0:
+          p =  p[(np.linalg.norm(p[:,:2], axis=1) < args.rCut)]
+          p = p[np.abs(p[:,2]) < args.zCut] 
+          for _id in np.unique(p[:,3]):
+            maxpoints = -1
+            pf = p[p[:,3] == _id]
+            plt.figure("xy")
+            plt.plot(pf[:,0],pf[:,1], '--', color="purple", alpha=0.3)#, label="MCTruth trajectory")
+            plt.figure("rz")
+            plt.plot(pf[:,2], np.sqrt(pf[:,0]**2 + pf[:,1]**2), '--', color="purple", alpha=0.3)#, label="MCTruth trajectory")
 
       if not args.no_process_hits:
         print "processing hits ..."

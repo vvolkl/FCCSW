@@ -94,11 +94,11 @@ from GaudiKernel import SystemOfUnits as units
 path_to_detector = simargs.pathToDetector
 
 if simargs.tripletTracker:
-  detectors_to_use=[path_to_detector+'Detector/DetFCChhBaseline1/compact/FCChh_DectEmptyTracker.xml',
+  detectors_to_use=[path_to_detector+'Detector/DetFCChhTrackerTkLayout/compact/FCChh_DectEmptyTracker.xml',
                     path_to_detector+'Detector/DetFCChhTrackerTkLayout/triplet/FCCtriplet_1barrel30mm.xml',
                     ]
 else:
-  detectors_to_use=[path_to_detector+'Detector/DetFCChhBaseline1/compact/FCChh_DectEmptyTracker.xml',
+  detectors_to_use=[path_to_detector+'Detector/DetFCChhTrackerTkLayout/compact/FCChh_DectEmptyTracker.xml',
                     path_to_detector+'Detector/DetFCChhTrackerTkLayout/compact/Tracker.xml',
                     ]
 

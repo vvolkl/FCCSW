@@ -28,6 +28,7 @@ audsvc = AuditorSvc()
 audsvc.Auditors = [chra]
 
 # switch between branch nameing conventions
+collectionNames = {}
 collectionNames["GenParticles"] = "GenParticles"
 collectionNames["GenVertices"] = "GenVertices"
 collectionNames["SimParticles"] = "SimParticles"
