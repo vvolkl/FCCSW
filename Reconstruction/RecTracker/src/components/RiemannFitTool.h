@@ -8,26 +8,24 @@
 #include "FWCore/DataHandle.h"
 #include "RecInterface/ITrackFittingTool.h"
 #include "datamodel/PositionedTrackHitCollection.h"
+#include "datamodel/TrackCollection.h"
 #include "datamodel/TrackHitCollection.h"
 #include "datamodel/TrackStateCollection.h"
-#include "datamodel/TrackCollection.h"
-
 
 #include <map>
 
-
-
-
-
+/** @class RiemannFitTool
+ * Track fitting tool implementation using tricktracks' Riemannfit
+ */
 class RiemannFitTool : public GaudiTool, virtual public ITrackFittingTool {
 public:
   RiemannFitTool(const std::string& type, const std::string& name, const IInterface* parent);
   ~RiemannFitTool() = default;
   virtual StatusCode initialize() override final;
   virtual StatusCode finalize() override final;
-  virtual std::pair<fcc::TrackCollection*, fcc::TrackStateCollection*> fitTracks(const fcc::PositionedTrackHitCollection* theHits, std::multimap<unsigned int, unsigned int> seedmap) override final;
-
-
+  virtual std::pair<fcc::TrackCollection*, fcc::TrackStateCollection*>
+  fitTracks(const fcc::PositionedTrackHitCollection* theHits,
+            std::multimap<unsigned int, unsigned int> seedmap) override final;
 
 private:
   Gaudi::Property<double> m_Bz{this, "Bz", 4., "Field strength along Z"};
