@@ -16,7 +16,7 @@ public:
   DeclareInterfaceID(ILayerGraphTool, 1, 0);
 
   /// construct and return the graph describing the seeding layers
-  virtual tricktrack::CMGraph getGraph() = 0;
+  virtual tricktrack::CMGraph graph() = 0;
 };
 
 #endif /* RECINTERFACE_ILAYERGRAPHTOOL */

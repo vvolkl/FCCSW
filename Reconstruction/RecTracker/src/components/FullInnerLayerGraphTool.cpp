@@ -26,7 +26,7 @@ StatusCode FullInnerLayerGraphTool::finalize() { return GaudiTool::finalize(); }
 /// Construct and return the layergraph for the Cellular automaton,
 // for the inner four barrel layers only
 // the interface to the layer graph is likely to be changed
-tricktrack::CMGraph FullInnerLayerGraphTool::getGraph() {
+tricktrack::CMGraph FullInnerLayerGraphTool::graph() {
   
   auto g = tricktrack::CMGraph();
 

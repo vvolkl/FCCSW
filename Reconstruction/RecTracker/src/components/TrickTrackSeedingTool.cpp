@@ -114,7 +114,7 @@ void TrickTrackSeedingTool::createBarrelSpacePoints(std::vector<Hit>& thePoints,
 std::multimap<unsigned int, unsigned int>
 TrickTrackSeedingTool::findSeeds(const fcc::PositionedTrackHitCollection* theHits) {
   // get layer graph from tool and create automaton
-  m_layerGraph = m_layerGraphTool->getGraph();
+  m_layerGraph = m_layerGraphTool->graph();
   unsigned int numLayers = m_layerGraph.theLayers.size(); 
 
   // create tracking region with parameters relevant to seed filters

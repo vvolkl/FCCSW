@@ -17,7 +17,7 @@ public:
   ~FullInnerLayerGraphTool() = default;
   virtual StatusCode initialize() override final;
   virtual StatusCode finalize() override final;
-  virtual tricktrack::CMGraph getGraph() override final;
+  virtual tricktrack::CMGraph graph() override final;
 };
 
 #endif /* RECTRACKER_FULLINNERLAYERGRAPHTOOL_H */
