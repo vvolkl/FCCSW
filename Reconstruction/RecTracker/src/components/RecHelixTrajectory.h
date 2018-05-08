@@ -20,6 +20,9 @@ class TrackStateCollection;
 class PositionedTrackHitCollection;
 }
 
+/** @class RecHelixtrajectory
+ *  Calculate points on the helix from the track state.
+ */
 class RecHelixTrajectory : public GaudiAlgorithm {
 public:
   RecHelixTrajectory(const std::string& name, ISvcLocator* svcLoc);
