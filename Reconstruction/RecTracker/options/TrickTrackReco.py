@@ -12,8 +12,6 @@ parser.add_argument('--nevents', type=int, default=10, help='specify number of e
 parser.add_argument('--npileup', type=int, default=0, help='specify number of events to process')
 parser.add_argument('--noSignal', action="store_true",  help='use old collection names')
 parser.add_argument('--cleanHits', action="store_true",  help='use old collection names')
-parser.add_argument('--legacyCollectionNames', action="store_true",  help='use old collection names')
-parser.add_argument('--overlayCollectionNames', action="store_true",  help='use old collection names')
 parser.add_argument('--trajectories', action="store_true",  help='read trajectories')
 parser.add_argument('--truthseeding', action="store_true",  help='use truth seeding toolG')
 parser.add_argument('--recoHelix', action="store_true",  help='run recoHelix')
@@ -29,29 +27,14 @@ chra = ChronoAuditor()
 audsvc = AuditorSvc()
 audsvc.Auditors = [chra]
 
-# easily switch between different branch naming conventions
-collectionNames = {}
-if args.legacyCollectionNames:
-  collectionNames["GenParticles"] = "allGenParticles"
-  collectionNames["GenVertices"] = "allGenVertices"
-  collectionNames["SimParticles"] = "simParticles"
-  collectionNames["SimVertices"] = "simVertices"
-  collectionNames["TrackerPositionedHits"] = "positionedHits"
-  collectionNames["TrackerHits"] = "hits"
-elif args.overlayCollectionNames:
-  collectionNames["GenParticles"] = "mergedGenParticles"
-  collectionNames["GenVertices"] = "mergedGenVertices`"
-  collectionNames["SimVertices"] = "mergedSimVertices"
-  collectionNames["SimParticles"] = "mergedSimParticles"
-  collectionNames["TrackerPositionedHits"] = "mergedTrackerPositionedHits"
-  collectionNames["TrackerHits"] = "mergedTrackerHits"
-else:
-  collectionNames["GenParticles"] = "GenParticles"
-  collectionNames["GenVertices"] = "GenVertices"
-  collectionNames["SimParticles"] = "SimParticles"
-  collectionNames["SimVertices"] = "SimVertices"
-  collectionNames["TrackerPositionedHits"] = "TrackerPositionedHits"
-  collectionNames["TrackerHits"] = "TrackerHits"
+# switch between branch nameing conventions
+collectionNames["GenParticles"] = "GenParticles"
+collectionNames["GenVertices"] = "GenVertices"
+collectionNames["SimParticles"] = "SimParticles"
+collectionNames["SimVertices"] = "SimVertices"
+collectionNames["TrackerPositionedHits"] = "TrackerPositionedHits"
+collectionNames["TrackerHits"] = "TrackerHits"
+
 if args.trajectories:
   collectionNames["trajectory"] = "trajectory"
   collectionNames["trajectoryPoints"] = "trajectoryPoints"
