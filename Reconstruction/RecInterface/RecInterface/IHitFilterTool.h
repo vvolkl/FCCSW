@@ -4,15 +4,14 @@
 // Gaudi
 #include "GaudiKernel/IAlgTool.h"
 
-
-
 namespace fcc {
 class TrackHit;
 }
 
-/** \brief Stateful filter of FCC hits based on their CellId.
+/** @class IHitFilterTool
+ *  Stateful filter of FCC hits based on their CellId.
  *
- *  Used in track reconstruction to get hits on the same layer, but 
+ *  Used in track reconstruction to get hits on the same layer, but
  *  is the interface to be used whenever a filter is applied to fcc hits.
  */
 class IHitFilterTool : virtual public IAlgTool {
