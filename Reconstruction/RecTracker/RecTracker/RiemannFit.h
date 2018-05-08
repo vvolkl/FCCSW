@@ -1,3 +1,4 @@
+// TODO: this file is part of tricktrack and should be removed once it becomes available as an external
 #ifndef TRICKTRACK_RIEMANNFIT_H
 #define TRICKTRACK_RIEMANNFIT_H
 
