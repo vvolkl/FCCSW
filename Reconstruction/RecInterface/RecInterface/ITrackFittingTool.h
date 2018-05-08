@@ -21,8 +21,8 @@ public:
   DeclareInterfaceID(ITrackFittingTool, 1, 0);
 
   /// Create tracks out of `theHits`, using the seeding information in `seedmap`
-  virtual std::pair<fcc::TrackCollection*, fcc::TrackStateCollection*> fitTracks(const fcc::PositionedTrackHitCollection* theHits, std::multimap<unsigned int, unsigned int> seedmap) = 0;
-
+  virtual std::pair<fcc::TrackCollection*, fcc::TrackStateCollection*>
+  fitTracks(const fcc::PositionedTrackHitCollection* theHits, std::multimap<unsigned int, unsigned int> seedmap) = 0;
 };
 
 #endif /* RECINTERFACE_ITRACKFITTINGTOOL_H */
