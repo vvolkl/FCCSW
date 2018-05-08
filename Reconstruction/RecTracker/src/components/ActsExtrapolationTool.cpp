@@ -44,18 +44,18 @@ StatusCode ActsExtrapolationTool::initialize() {
   if (sc.isFailure()) {
     return sc;
   }
-  if (!m_trkGeoSvc) {
+  if (nullptr == m_trkGeoSvc) {
     error() << "Did not retrieve tracking geometry service!" << endmsg;
     return StatusCode::FAILURE;
   }
 
   auto trackingGeometry = m_trkGeoSvc->trackingGeometry();
-  if (!trackingGeometry) {
+  if (nullptr == trackingGeometry) {
     error() << "Could not retrieve tracking geometry!" << endmsg;
     return StatusCode::FAILURE;
   }
 
-  info() << "Set up the Extrapolator" << endmsg;
+  debug() << "Set up the Extrapolator" << endmsg;
   // EXTRAPOLATOR - set up the extrapolator
 
   /// @todo hardcode engines, possibly create interfaces for future
@@ -105,7 +105,6 @@ ActsExtrapolationTool::extrapolate(fcc::TrackState theTrackState) {
   // parameters
   Acts::ActsVectorD<5> pars;
   pars << d0, z0, phi, theta, qop;
-  // some screen output
   std::unique_ptr<Acts::ActsSymMatrixD<5>> cov = nullptr;
   // create the bound parameters
   Acts::BoundParameters startParameters(std::move(cov), std::move(pars), surface);
@@ -137,14 +136,13 @@ ActsExtrapolationTool::extrapolate(fcc::TrackState theTrackState) {
     ecc.sensitiveCurvilinear = true;
   }
 
-  // force a stop in the extrapoaltion mode
+  // stop  extrapolation if it goes over a path limit
   if (m_pathLimit > 0.) {
     debug() << "path limit set to: " << m_pathLimit << endmsg;
     ecc.pathLimit = m_pathLimit;
     ecc.addConfigurationMode(Acts::ExtrapolationMode::StopWithPathLimit);
   }
   debug() << "search mode set to: " << m_searchMode << endmsg;
-  // screen output
   debug() << "===> forward extrapolation - collecting information <<===" << endmsg;
   Acts::ExtrapolationCode eCode = m_extrapolationEngine->extrapolate(ecc);
   if (eCode.isFailure()) error() << ("Extrapolation failed.") << endmsg;

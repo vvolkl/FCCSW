@@ -31,10 +31,6 @@ public:
   /// extrapolates a track through the tracking geometry
   /// beginning at a given vertex into a given direction with given momentum and
   /// charge.
-  /// @param vertex the origin position of the particle
-  /// @param momentum the three dimensional momentum of the particle
-  /// @param charge the charge of the particle
-  /// @return the Acts::ExtrapolationCell
   virtual //std::vector<fcc::PositionedTrackHit>
   Acts::ExtrapolationCell<Acts::TrackParameters>
   extrapolate(const fcc::TrackState theTrackState) final;
