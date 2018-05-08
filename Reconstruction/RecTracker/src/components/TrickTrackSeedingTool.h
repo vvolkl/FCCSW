@@ -25,9 +25,9 @@ namespace tricktrack {
   class TTPoint;
 }
 
-
-
-
+/** @class TrickTrackSeedingTool
+ * Implementation of a track seeding tool using tricktrack's cellular automaton
+ */
 class TrickTrackSeedingTool : public GaudiTool, virtual public ITrackSeedingTool {
 public:
   TrickTrackSeedingTool(const std::string& type, const std::string& name, const IInterface* parent);
