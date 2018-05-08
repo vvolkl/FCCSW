@@ -112,8 +112,8 @@ podioevent   = FCCDataSvc("EventDataSvc", input=args.inputfile)
 from Configurables import FastHitFilterTool
 hitfiltertool = FastHitFilterTool("FastHitFilterTool")
 
-from Configurables import FullInnerLayerGraphTool
-layergraphtool = FullInnerLayerGraphTool()
+from Configurables import FCChhSeedingGraphTool
+layergraphtool = FCChhSeedingGraphTool()
 
 
 from Configurables import TrickTrackSeedingTool

@@ -1,19 +1,19 @@
-#include "FullInnerLayerGraphTool.h"
+#include "FCChhSeedingGraphTool.h"
 
 #include "RecInterface/ILayerGraphTool.h"
 
 // TrickTrack headers
 #include "tricktrack/CMGraph.h"
 
-DECLARE_TOOL_FACTORY(FullInnerLayerGraphTool)
+DECLARE_TOOL_FACTORY(FCChhSeedingGraphTool)
 
-FullInnerLayerGraphTool::FullInnerLayerGraphTool(const std::string& type, const std::string& name,
+FCChhSeedingGraphTool::FCChhSeedingGraphTool(const std::string& type, const std::string& name,
                                                    const IInterface* parent)
     : GaudiTool(type, name, parent) {
   declareInterface<ILayerGraphTool>(this);
 }
 
-StatusCode FullInnerLayerGraphTool::initialize() {
+StatusCode FCChhSeedingGraphTool::initialize() {
   StatusCode sc = GaudiTool::initialize();
   if (sc.isFailure()) {
     return sc;
@@ -21,12 +21,12 @@ StatusCode FullInnerLayerGraphTool::initialize() {
   return sc;
 }
 
-StatusCode FullInnerLayerGraphTool::finalize() { return GaudiTool::finalize(); }
+StatusCode FCChhSeedingGraphTool::finalize() { return GaudiTool::finalize(); }
 
 /// Construct and return the layergraph for the Cellular automaton,
 // for the inner four barrel layers only
 // the interface to the layer graph is likely to be changed
-tricktrack::CMGraph FullInnerLayerGraphTool::graph() {
+tricktrack::CMGraph FCChhSeedingGraphTool::graph() {
   
   auto g = tricktrack::CMGraph();
 
