@@ -131,9 +131,9 @@ if simargs.geantinos:
   from Configurables import SimG4UserLimitRegion, SimG4UserLimitPhysicsList
   regiontool = SimG4UserLimitRegion("limits", volumeNames=["InnerBRL", "OuterBRL"],
                                                      maxStep = 0.1*units.mm)
-  physicslist = SimG4UserLimitPhysicsList("Physics", fullphysics="SimG4GeantinoDeposits")
+  physicslist = SimG4UserLimitPhysicsList("Physics", fullphysics="SimG4GeantinoPhysicsList")
   regions = [regiontool]
-  physicslist = "SimG4GeantinoDeposits"
+  physicslist = "SimG4GeantinoPhysicsList"
 else:
   physicslist = "SimG4FtfpBert"
   regions = []

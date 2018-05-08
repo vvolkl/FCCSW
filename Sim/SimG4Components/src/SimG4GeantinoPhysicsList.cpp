@@ -1,4 +1,4 @@
-#include "SimG4GeantinoDeposits.h"
+#include "SimG4GeantinoPhysicsList.h"
 
 // Geant4
 #include "G4VModularPhysicsList.hh"
@@ -141,22 +141,22 @@ class GeantinoEnergyDepositList : public G4VModularPhysicsList {
 };
 
 
-DECLARE_TOOL_FACTORY(SimG4GeantinoDeposits)
+DECLARE_TOOL_FACTORY(SimG4GeantinoPhysicsList)
 
-SimG4GeantinoDeposits::SimG4GeantinoDeposits(const std::string& aType, const std::string& aName, const IInterface* aParent) :
+SimG4GeantinoPhysicsList::SimG4GeantinoPhysicsList(const std::string& aType, const std::string& aName, const IInterface* aParent) :
   AlgTool(aType, aName, aParent) {
   declareInterface<ISimG4PhysicsList>(this);
 }
 
-StatusCode SimG4GeantinoDeposits::initialize() {
+StatusCode SimG4GeantinoPhysicsList::initialize() {
   return AlgTool::initialize();
 }
 
-StatusCode SimG4GeantinoDeposits::finalize() {
+StatusCode SimG4GeantinoPhysicsList::finalize() {
   return AlgTool::finalize();
 }
 
-G4VModularPhysicsList* SimG4GeantinoDeposits::physicsList() {
+G4VModularPhysicsList* SimG4GeantinoPhysicsList::physicsList() {
    // ownership passed to SimG4Svc which will register it in G4RunManager. To be deleted in ~G4RunManager()
   return new GeantinoEnergyDepositList;
 }
