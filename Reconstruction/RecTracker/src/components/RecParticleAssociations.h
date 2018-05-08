@@ -20,6 +20,11 @@ class MCParticleCollection;
 class ParticleMCParticleAssociationCollection;
 }
 
+/** @class RecParticleAssociations
+ *  Associate reconstructed and simulated particles using their G4Track id.
+ *
+ *  Necessary for efficiency calculations.
+ */
 class RecParticleAssociations : public GaudiAlgorithm {
 public:
   RecParticleAssociations(const std::string& name, ISvcLocator* svcLoc);
@@ -33,9 +38,11 @@ public:
   StatusCode finalize() override final;
 
 private:
-  /// TrackHits as Input to the track seeding
+  /// Input: reconstructed particles
   DataHandle<fcc::ParticleCollection> m_recParticles{"TrackRecoParticles", Gaudi::DataHandle::Reader, this};
+  /// Input: simulated particles
   DataHandle<fcc::MCParticleCollection> m_simParticles{"SimParticles", Gaudi::DataHandle::Reader, this};
+  /// Output: associations between simulated and reconstructed particles
   DataHandle<fcc::ParticleMCParticleAssociationCollection> m_associations{"SimRecoParticleAssociation", Gaudi::DataHandle::Writer, this};
 };
 
