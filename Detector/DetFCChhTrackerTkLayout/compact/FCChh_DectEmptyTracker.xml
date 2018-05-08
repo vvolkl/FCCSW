@@ -22,5 +22,5 @@
     <constant name="world_y" value="1.7*m"/>
     <constant name="world_z" value="18*m"/>
   </define>
-  <include ref="./FCChh_DectDimensions.xml" />
+  <include ref="../../DetFCChhBaseline1/compact/FCChh_DectDimensions.xml" />
 </lccdd>
