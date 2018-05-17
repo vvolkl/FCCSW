@@ -4,8 +4,6 @@
 #include "GaudiKernel/IAlgTool.h"
 #include "datamodel/PositionedTrackHit.h"
 #include "datamodel/TrackState.h"
-#include "ACTS/EventData/TrackParameters.hpp"
-#include "ACTS/Extrapolation/ExtrapolationCell.hpp"
 
 
 /** @class ITrackExtrapolationTool RecInterface/RecInterface/ITrackExtrapolationTool.h
@@ -18,8 +16,7 @@ class ITrackExtrapolationTool : virtual public IAlgTool {
  public:
   DeclareInterfaceID(ITrackExtrapolationTool, 1, 0);
 
-  virtual // std::vector<fcc::PositionedTrackHit>
-  Acts::ExtrapolationCell<Acts::TrackParameters>
+  virtual  std::vector<fcc::TrackState>
    extrapolate(fcc::TrackState theTrackState) = 0;
 };
 

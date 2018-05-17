@@ -31,8 +31,7 @@ public:
   /// extrapolates a track through the tracking geometry
   /// beginning at a given vertex into a given direction with given momentum and
   /// charge.
-  virtual //std::vector<fcc::PositionedTrackHit>
-  Acts::ExtrapolationCell<Acts::TrackParameters>
+  virtual std::vector<fcc::TrackState>
   extrapolate(const fcc::TrackState theTrackState) final;
 
 private:
@@ -52,6 +51,8 @@ private:
   int m_searchMode;
   /// the given path limit (-1 if no limit)
   double m_pathLimit;
+  /// for the constant magnetic field: field strength in z
+  Gaudi::Property<double> m_bFieldZ{this, "bFieldZ", 0.};
 
   /// the extrapolation engine
   std::shared_ptr<Acts::ExtrapolationEngine> m_extrapolationEngine;

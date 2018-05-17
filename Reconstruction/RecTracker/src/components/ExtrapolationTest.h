@@ -10,7 +10,7 @@
 #include "RecInterface/ITrackExtrapolationTool.h"
 
 namespace fcc {
-class PositionedTrackHitCollection;
+class TrackstateCollection;
 class MCParticleCollection;
 }
 
@@ -44,10 +44,9 @@ private:
   /// Handle for the EDM MC particles to be read in
   DataHandle<fcc::MCParticleCollection> m_genParticles{"allGenParticles", Gaudi::DataHandle::Reader, this};
   /// output of points along track
-  DataHandle<fcc::PositionedTrackHitCollection> m_positionedTrackHits{"TrackerPositionedHits", Gaudi::DataHandle::Writer,
+  DataHandle<fcc::TrackStateCollection> m_extrapolatedTrackStates{"ExtrapolatedTrackStates", Gaudi::DataHandle::Writer,
                                                                       this};
 
-                                                                      std::default_random_engine m_generator;
 };
 
 #endif /* RECTRACKER_EXTRAPOLATIONTEST_H */

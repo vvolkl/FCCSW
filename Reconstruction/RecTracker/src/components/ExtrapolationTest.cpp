@@ -8,7 +8,7 @@
 
 
 #include "datamodel/PositionedTrackHitCollection.h"
-#include "datamodel/TrackHitCollection.h"
+#include "datamodel/TrackStateCollection.h"
 
 #include "datamodel/GenVertexCollection.h"
 #include "datamodel/MCParticleCollection.h"
@@ -49,7 +49,7 @@ ExtrapolationTest::ExtrapolationTest(const std::string& name, ISvcLocator* svcLo
     : GaudiAlgorithm(name, svcLoc), m_extrapolationTool(nullptr) {
   declareProperty("extrapolationTool", m_extrapolationTool,
                   "Pointer to extrapolation tool, needed to extrapolate through the tracker.");
-  declareProperty("positionedTrackHits", m_positionedTrackHits, "hits/TrackerPositionedHits");
+  declareProperty("ExtrapolatedTrackStates", m_extrapolatedTrackStates, "ExtrapolatedTrackStates");
   declareProperty("genParticles", m_genParticles, "Handle for the EDM MC particles to be read");
 }
 
@@ -70,8 +70,8 @@ StatusCode ExtrapolationTest::execute() {
 
   // get the input mc particles
   const fcc::MCParticleCollection* mcparticles = m_genParticles.get();
-  // create the PositionedTrackHitCollection to be written out
-  auto posHitCollection = m_positionedTrackHits.createAndPut();
+  // create the TrackStateCollection to be written out
+  auto exTrackStateCollection = m_extrapolatedTrackStates.createAndPut();
   // go through all particles to be extrapolated for this event
   for (const auto& mcparticle : *mcparticles) {
 
@@ -87,26 +87,15 @@ StatusCode ExtrapolationTest::execute() {
 
     auto theTrackState = fcc::TrackState(phi, theta, qOverP, d0, z0, vertex.position(), std::array<float, 15ul>());
     debug() << "start extrapolation ..." << endmsg;
-    auto exCell = m_extrapolationTool->extrapolate(theTrackState);
+    auto stateVector = m_extrapolationTool->extrapolate(theTrackState);
+    for (auto t: stateVector) {
+      auto theTrackstate = exTrackStateCollection->create();
+      theTrackstate.referencePoint(t.referencePoint());
+    }
 
-    // write out extrapolation steps
-    for (const auto& step : exCell.extrapolationSteps) {
-      const auto& tp = step.parameters;
-      if (tp) {
-        if (step.surface->associatedDetectorElement()) {
-        fcc::TrackHit edmHit;
-        fcc::BareHit& edmHitCore = edmHit.core();
-        auto position = fcc::Point();
-        position.x = tp->position().x();
-        position.y = tp->position().y();
-        position.z = tp->position().z();
-        posHitCollection->create(position, edmHitCore);
-        }
-      }  // if track parameters
-    }    // go through steps
   }
 
-  debug() << "got " << posHitCollection->size() << " extrapolation steps" << endmsg;
+  debug() << "got " << exTrackStateCollection->size() << " extrapolation steps" << endmsg;
 
   return StatusCode::SUCCESS;
 }

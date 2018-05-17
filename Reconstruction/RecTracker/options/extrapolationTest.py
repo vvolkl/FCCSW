@@ -46,7 +46,7 @@ extrapolationTool.pathLimit             = -1.
 from Configurables import ExtrapolationTest
 extrapolationTest = ExtrapolationTest("ExtrapolationTest", OutputLevel=DEBUG)
 extrapolationTest.extrapolationTool=extrapolationTool
-extrapolationTest.positionedTrackHits.Path="ExtrapolationHits"
+extrapolationTest.ExtrapolatedTrackStates.Path="ExtrapolatedTrackstates"
 extrapolationTest.genParticles.Path="allGenParticles"
 
 # Geant4 service

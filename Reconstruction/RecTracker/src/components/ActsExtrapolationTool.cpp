@@ -44,7 +44,7 @@ StatusCode ActsExtrapolationTool::initialize() {
   if (sc.isFailure()) {
     return sc;
   }
-  if (nullptr == m_trkGeoSvc) {
+  if (!m_trkGeoSvc.isValid()) {
     error() << "Did not retrieve tracking geometry service!" << endmsg;
     return StatusCode::FAILURE;
   }
@@ -63,7 +63,7 @@ StatusCode ActsExtrapolationTool::initialize() {
   using RKEngine = Acts::RungeKuttaEngine<Acts::ConstantBField>;
   RKEngine::Config propConfig;
   /// @todo check units
-  propConfig.fieldService = std::make_shared<Acts::ConstantBField>(0., 0., 0.);
+  propConfig.fieldService = std::make_shared<Acts::ConstantBField>(0., 0., m_bFieldZ);
   auto propEngine = std::make_shared<RKEngine>(propConfig);
   // (b) MaterialEffectsEngine
   auto matConfig = Acts::MaterialEffectsEngine::Config();
@@ -91,7 +91,7 @@ StatusCode ActsExtrapolationTool::initialize() {
   return sc;
 }
 
-Acts::ExtrapolationCell<Acts::TrackParameters>
+std::vector<fcc::TrackState>
 ActsExtrapolationTool::extrapolate(fcc::TrackState theTrackState) {
   // create the start parameters
   auto refPoint = theTrackState.referencePoint();
@@ -148,7 +148,20 @@ ActsExtrapolationTool::extrapolate(fcc::TrackState theTrackState) {
   if (eCode.isFailure()) error() << ("Extrapolation failed.") << endmsg;
   if (eCode.isSuccess()) info() << ("Extrapolation finished successfully") << endmsg;
 
-  return ecc;
+  std::vector<fcc::TrackState> stateVector;
+    for (const auto& step : ecc.extrapolationSteps) {
+      const auto& tp = step.parameters;
+      if (tp) {
+        if (step.surface->associatedDetectorElement()) {
+        auto position = fcc::Point();
+        position.x = tp->position().x();
+        position.y = tp->position().y();
+        position.z = tp->position().z();
+        stateVector.emplace_back(0., 0., 0., 0., 0., position, std::array<float, 15ul>());
+        }
+      }  // if track parameters
+  }
+  return stateVector;
 }
 
 StatusCode ActsExtrapolationTool::finalize() { return GaudiTool::finalize(); }
