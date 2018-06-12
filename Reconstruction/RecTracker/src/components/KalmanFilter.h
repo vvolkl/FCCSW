@@ -9,6 +9,7 @@
 // FCCSW
 #include "FWCore/DataHandle.h"
 
+#include "RecInterface/IKalmanMeasurementTool.h"
 
 
 namespace fcc {
@@ -32,6 +33,8 @@ private:
   /// input for the kalman fit
   DataHandle<fcc::TrackStateCollection> m_trackStates{"TrackStates", Gaudi::DataHandle::Writer,
                                                                       this};
+
+  ToolHandle<IKalmanMeasurementTool> m_measTool{"KalmanMeas/KalmanMeas", this};
 };
 
 
