@@ -1,5 +1,5 @@
-#ifndef SIMG4COMPONENTS_G4GEANTINODEPOSITS_H
-#define SIMG4COMPONENTS_G4GEANTINODEPOSITS_H
+#ifndef SIMG4COMPONENTS_G4GEANTINOPHYSICSLIST_H
+#define SIMG4COMPONENTS_G4GEANTINOPHYSICSLIST_H
 // Gaudi
 #include "GaudiKernel/AlgTool.h"
 
@@ -7,11 +7,11 @@
 #include "SimG4Interface/ISimG4PhysicsList.h"
 
 
-class SimG4GeantinoDeposits: public AlgTool, virtual public ISimG4PhysicsList {
+class SimG4GeantinoPhysicsList: public AlgTool, virtual public ISimG4PhysicsList {
 public:
-  explicit SimG4GeantinoDeposits(const std::string& aType , const std::string& aName,
+  explicit SimG4GeantinoPhysicsList(const std::string& aType , const std::string& aName,
                   const IInterface* aParent);
-  virtual ~SimG4GeantinoDeposits() = default;
+  virtual ~SimG4GeantinoPhysicsList() = default;
 
   /**  Initialize.
    *   @return status code
@@ -30,4 +30,4 @@ public:
 
 };
 
-#endif /* SIMG4COMPONENTS_G4GEANTINODEPOSITS_H */
+#endif /* SIMG4COMPONENTS_G4GEANTINOPHYSICSLIST_H */

@@ -46,13 +46,14 @@ static dd4hep::Ref_t createTkLayoutTrackerBarrel(dd4hep::Detector& lcdd,
   // loop over 'layer' nodes in xml
   dd4hep::xml::Component xLayers = xmlElement.child(_Unicode(layers));
   for (dd4hep::xml::Collection_t xLayerColl(xLayers, _U(layer)); nullptr != xLayerColl; ++xLayerColl) {
+    std::vector<dd4hep::xml::Component> rodLists;
     dd4hep::xml::Component xLayer = static_cast<dd4hep::xml::Component>(xLayerColl);
     dd4hep::xml::Component xRods = xLayer.child("rods");
-    dd4hep::xml::Component xRodEven = xRods.child("rodOdd");
-    dd4hep::xml::Component xRodOdd = xRods.child("rodEven");
-    dd4hep::xml::Component xModulesEven = xRodEven.child("modules");
-    dd4hep::xml::Component xModulePropertiesOdd = xRodOdd.child("moduleProperties");
-    dd4hep::xml::Component xModulesOdd = xRodOdd.child("modules");
+    rodLists.push_back(xRods.child("rodOdd"));
+    rodLists.push_back(xRods.child("rodEven"));
+    rodLists.push_back(xRods.child("rodOddTilted", false));
+    rodLists.push_back(xRods.child("rodEvenTilted", false));
+    dd4hep::xml::Component xModulePropertiesOdd = rodLists[0].child("moduleProperties");
     dd4hep::Tube layerShape(xLayer.rmin(), xLayer.rmax(), dimensions.zmax());
     Volume layerVolume("layer", layerShape, lcdd.material("Air"));
     //layerVolume.setVisAttributes(lcdd.invisible());
@@ -72,6 +73,17 @@ static dd4hep::Ref_t createTkLayoutTrackerBarrel(dd4hep::Detector& lcdd,
     integratedModuleComponentThickness = 0;
     int moduleCounter = 0;
     Volume moduleVolume;
+    // store the materials of each tracking module for tracking geometry
+    std::vector<std::pair<dd4hep::Material, double>> compMaterials;
+    // go through all components to collect the material to later attach it to the modoule
+    for (dd4hep::xml::Collection_t xModuleComponentOddColl(xModuleComponentsOdd, _U(component));
+         nullptr != xModuleComponentOddColl;
+         ++xModuleComponentOddColl) {
+      dd4hep::xml::Component xModuleComponentOdd = static_cast<dd4hep::xml::Component>(xModuleComponentOddColl);
+      compMaterials.push_back(
+          std::make_pair(lcdd.material(xModuleComponentOdd.materialStr()), xModuleComponentOdd.thickness()));
+    }
+
     for (dd4hep::xml::Collection_t xModuleComponentOddColl(xModuleComponentsOdd, _U(component));
          nullptr != xModuleComponentOddColl;
          ++xModuleComponentOddColl) {
@@ -83,34 +95,44 @@ static dd4hep::Ref_t createTkLayoutTrackerBarrel(dd4hep::Detector& lcdd,
                             lcdd.material(xModuleComponentOdd.materialStr()));
       moduleVolume.setVisAttributes(lcdd.invisible());
       unsigned int nPhi = xRods.repeat();
-      dd4hep::xml::Handle_t currentComp;
-      for (unsigned int phiIndex = 0; phiIndex < nPhi; ++phiIndex) {
+      for (unsigned int phiIndex = 0; phiIndex < nPhi; phiIndex += 2) {
         double lX = 0;
         double lY = 0;
         double lZ = 0;
-        if (0 == phiIndex % 2) {
-          phi = 2 * M_PI * static_cast<double>(phiIndex) / static_cast<double>(nPhi);
-          currentComp = xModulesEven;
-        } else {
-          currentComp = xModulesOdd;
-        }
-        for (dd4hep::xml::Collection_t xModuleColl(currentComp, _U(module)); nullptr != xModuleColl; ++xModuleColl) {
-          dd4hep::xml::Component xModule = static_cast<dd4hep::xml::Component>(xModuleColl);
-          double currentPhi = atan2(xModule.Y(), xModule.X());
-          double componentOffset =  integratedModuleComponentThickness - 0.5 * xModulePropertiesOdd.attr<double>("modThickness") + 0.5 * xModuleComponentOdd.thickness();
-          lX = xModule.X() + cos(currentPhi) * componentOffset;
-          lY = xModule.Y() + sin(currentPhi) * componentOffset;
-          lZ = xModule.Z();
-          dd4hep::Translation3D moduleOffset(lX, lY, lZ);
-          dd4hep::Transform3D lTrafo(dd4hep::RotationZ(atan2(lY,  lX) + 0.5 * M_PI), moduleOffset);
-          dd4hep::RotationZ lRotation(phi);
-          PlacedVolume placedModuleVolume = layerVolume.placeVolume(moduleVolume, lRotation * lTrafo);
-          if (xModuleComponentOdd.isSensitive()) {
-            placedModuleVolume.addPhysVolID("module", moduleCounter);
-            moduleVolume.setSensitiveDetector(sensDet);
-            DetElement mod_det(lay_det, "module" + std::to_string(moduleCounter), moduleCounter);
-            mod_det.setPlacement(placedModuleVolume);
-            ++moduleCounter;
+        //for (std::string rodListName: {"rodOdd", "rodEven", "rodEvenTilted", "rodOddTilted"}) {
+        for (auto currentComp: rodLists) {
+          //auto currentComp = xRods.child(rodListName.c_str(), false);
+          if (currentComp.ptr()) {
+
+            phi = 2 * M_PI * static_cast<double>(phiIndex) / static_cast<double>(nPhi);
+            for (dd4hep::xml::Collection_t xModuleColl(currentComp.child(_Unicode(modules)), _U(module)); nullptr != xModuleColl; ++xModuleColl) {
+              dd4hep::xml::Component xModule = static_cast<dd4hep::xml::Component>(xModuleColl);
+              double currentPhi = atan2(xModule.Y(), xModule.X());
+              double componentOffset =  integratedModuleComponentThickness - 0.5 * xModulePropertiesOdd.attr<double>("modThickness") + 0.5 * xModuleComponentOdd.thickness();
+              dd4hep::Translation3D offsetOnly (cos(currentPhi) * componentOffset, sin(currentPhi) * componentOffset, 0);
+              lX = xModule.X();// + cos(currentPhi) * componentOffset;
+              lY = xModule.Y();// + sin(currentPhi) * componentOffset;
+              lZ = xModule.Z();
+              dd4hep::Translation3D moduleOffset(lX, lY, lZ);
+              dd4hep::Transform3D lTrafo(dd4hep::RotationZ(atan2(lY,  lX) + 0.5 * M_PI), moduleOffset);
+              dd4hep::RotationZ lRotation(phi);
+              double thetaTilt = xModule.attr<double>("thetaTilt");
+              dd4hep::RotationX lRotation_thetaTilt(-1 * thetaTilt);
+              PlacedVolume placedModuleVolume = layerVolume.placeVolume(moduleVolume, lRotation * lTrafo * lRotation_thetaTilt * offsetOnly);
+              if (xModuleComponentOdd.isSensitive()) {
+                placedModuleVolume.addPhysVolID("module", moduleCounter);
+                moduleVolume.setSensitiveDetector(sensDet);
+                DetElement mod_det(lay_det, "module" + std::to_string(moduleCounter), moduleCounter);
+                mod_det.setPlacement(placedModuleVolume);
+
+                // Acts extensions for the modules, with material info
+                Acts::ActsExtension* moduleExtension = new Acts::ActsExtension(compMaterials);
+                mod_det.addExtension<Acts::IActsExtension>(moduleExtension);
+
+
+                ++moduleCounter;
+              }
+            }
           }
         }
       }
