@@ -8,6 +8,7 @@
 
 
 #include "datamodel/TrackStateCollection.h"
+#include "datamodel/PositionedTrackHitCollection.h"
 
 
 #include <cmath>
@@ -36,6 +37,20 @@ StatusCode KalmanFilter::execute() {
 
 
     /* TODO: Input, initial state */
+    const fcc::TrackStateCollection* trackSeeds = m_trackSeeds.get();
+    for (const auto& trackSeed: *trackSeeds) {
+      std::cout << "trackSeed:\t" << trackSeed.d0() << "\t" << trackSeed.z0() << "\t" << trackSeed.theta() << "\t" << trackSeed.phi() << "\t" << trackSeed.qOverP() << std::endl; 
+      std::cout << "\t refPoint: " << trackSeed.referencePoint().x << std::endl;
+    }
+
+
+    const fcc::PositionedTrackHitCollection* trackHits = m_hits.get();
+    for (const auto& hit: *trackHits) {
+      std::cout << "measurement: " <<  hit.position().x << std::endl;
+ 
+    }
+    // output
+    auto fittedTrackCollection = m_fittedTracks.createAndPut();
 
 
 
@@ -195,10 +210,8 @@ StatusCode KalmanFilter::execute() {
 
 
 
-  fcc::TrackStateCollection* trackStateCollection = new fcc::TrackStateCollection();
 
 
-  m_fittedTracks.put(trackStateCollection);
   return StatusCode::SUCCESS;
 }
 

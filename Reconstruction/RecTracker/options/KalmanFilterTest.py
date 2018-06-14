@@ -18,7 +18,7 @@ from Configurables import KalmanFilter
 kalman = KalmanFilter()
 kalman.FittedTracks.Path = "FittedTracks"
 kalman.TrackSeeds.Path = "ExtrapolatedTrackstates"
-kalman.TrackerHits.Path = "TrackerHits"
+kalman.TrackerHits.Path = "SimTrackerPositionedHits"
 
 
 from Configurables import ApplicationMgr
