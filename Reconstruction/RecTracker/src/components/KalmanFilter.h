@@ -14,6 +14,7 @@
 
 namespace fcc {
 class TrackStateCollection;
+class PositionedTrackHitCollection;
 }
 
 class KalmanFilter : public GaudiAlgorithm {
@@ -31,10 +32,15 @@ public:
 private:
 
   /// input for the kalman fit
-  DataHandle<fcc::TrackStateCollection> m_trackStates{"TrackStates", Gaudi::DataHandle::Writer,
+  DataHandle<fcc::TrackStateCollection> m_fittedTracks{"FittedTracks", Gaudi::DataHandle::Writer,
                                                                       this};
 
-  ToolHandle<IKalmanMeasurementTool> m_measTool{"KalmanMeas/KalmanMeas", this};
+  DataHandle<fcc::TrackStateCollection> m_trackSeeds{"TrackSeeds", Gaudi::DataHandle::Reader,
+                                                                      this};
+
+  DataHandle<fcc::PositionedTrackHitCollection> m_hits{"TrackerHits", Gaudi::DataHandle::Reader,
+                                                                      this};
+
 };
 
 

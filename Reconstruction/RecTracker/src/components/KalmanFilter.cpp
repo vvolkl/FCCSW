@@ -22,7 +22,9 @@ DECLARE_ALGORITHM_FACTORY(KalmanFilter)
 
 KalmanFilter::KalmanFilter(const std::string& name, ISvcLocator* svcLoc) : GaudiAlgorithm(name, svcLoc) 
 {
-  //declareProperty("TrackStates", m_trackStates, "tracks/TrackStates");
+  declareProperty("FittedTracks", m_fittedTracks, "tracks/FittedTracks");
+  declareProperty("TrackSeeds", m_trackSeeds, "tracks/TrackSeeds");
+  declareProperty("TrackerHits", m_hits, "TrackerHits");
 }
 
 StatusCode KalmanFilter::initialize() {
@@ -196,7 +198,7 @@ StatusCode KalmanFilter::execute() {
   fcc::TrackStateCollection* trackStateCollection = new fcc::TrackStateCollection();
 
 
-  m_trackStates.put(trackStateCollection);
+  m_fittedTracks.put(trackStateCollection);
   return StatusCode::SUCCESS;
 }
 
