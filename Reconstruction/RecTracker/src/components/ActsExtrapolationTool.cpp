@@ -9,6 +9,7 @@
 #include "ACTS/Extrapolation/StaticNavigationEngine.hpp"
 #include "ACTS/MagneticField/ConstantBField.hpp"
 #include "ACTS/Utilities/Logger.hpp"
+#include "ACTS/Utilities/Units.hpp"
 
 #include "RecTracker/ACTSLogger.h"
 
@@ -63,7 +64,7 @@ StatusCode ActsExtrapolationTool::initialize() {
   using RKEngine = Acts::RungeKuttaEngine<Acts::ConstantBField>;
   RKEngine::Config propConfig;
   /// @todo check units
-  propConfig.fieldService = std::make_shared<Acts::ConstantBField>(0., 0., m_bFieldZ);
+  propConfig.fieldService = std::make_shared<Acts::ConstantBField>(0., 0., m_bFieldZ * Acts::units::_T);
   auto propEngine = std::make_shared<RKEngine>(propConfig);
   // (b) MaterialEffectsEngine
   auto matConfig = Acts::MaterialEffectsEngine::Config();
@@ -105,7 +106,8 @@ ActsExtrapolationTool::extrapolate(fcc::TrackState theTrackState) {
   // parameters
   Acts::ActsVectorD<5> pars;
   pars << d0, z0, phi, theta, qop;
-  std::unique_ptr<Acts::ActsSymMatrixD<5>> cov = nullptr;
+
+  std::unique_ptr<Acts::ActsSymMatrixD<5>> cov = std::make_unique<Acts::ActsSymMatrixD<5>>(0.00001 * Acts::ActsSymMatrixD<5>::Identity());
   // create the bound parameters
   Acts::BoundParameters startParameters(std::move(cov), std::move(pars), surface);
   // create the extrapolation cell & configure it
@@ -154,9 +156,13 @@ ActsExtrapolationTool::extrapolate(fcc::TrackState theTrackState) {
       if (tp) {
         if (step.surface->associatedDetectorElement()) {
         auto position = fcc::Point();
+        std::cout << "acts covariance: " << std::endl;
+        std::cout << *( tp->covariance()) << std::endl;
         position.x = tp->position().x();
         position.y = tp->position().y();
         position.z = tp->position().z();
+        std::cout << "acts full parameters" << std::endl;
+        std::cout << tp->parameters() << std::endl;
         stateVector.emplace_back(0., 0., 0., 0., 0., position, std::array<float, 15ul>());
         }
       }  // if track parameters

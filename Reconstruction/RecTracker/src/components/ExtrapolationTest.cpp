@@ -1,7 +1,6 @@
 #include "DetInterface/IGeoSvc.h"
 #include "DetInterface/ITrackingGeoSvc.h"
 #include "RecInterface/ITrackSeedingTool.h"
-#include "SimG4Common/Units.h"
 
 #include "GaudiKernel/IRndmGenSvc.h"
 #include "GaudiKernel/SystemOfUnits.h"
@@ -91,6 +90,10 @@ StatusCode ExtrapolationTest::execute() {
     for (auto t: stateVector) {
       auto theTrackstate = exTrackStateCollection->create();
       theTrackstate.referencePoint(t.referencePoint());
+
+      //debug
+      fcc::Point _rp = t.referencePoint();
+      std::cout << "Track position, r: \t" << std::sqrt(std::pow(_rp.x,2) + std::pow(_rp.y,2))  << " phi: \t" << std::atan2(_rp.y, _rp.x) << " z: \t" << _rp.z << std::endl;
     }
 
   }

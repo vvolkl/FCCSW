@@ -52,7 +52,7 @@ private:
   /// the given path limit (-1 if no limit)
   double m_pathLimit;
   /// for the constant magnetic field: field strength in z
-  Gaudi::Property<double> m_bFieldZ{this, "bFieldZ", 0.};
+  Gaudi::Property<double> m_bFieldZ{this, "bFieldZ", 4.};
 
   /// the extrapolation engine
   std::shared_ptr<Acts::ExtrapolationEngine> m_extrapolationEngine;

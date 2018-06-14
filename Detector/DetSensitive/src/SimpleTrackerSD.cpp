@@ -42,6 +42,10 @@ bool SimpleTrackerSD::ProcessHits(G4Step* aStep, G4TouchableHistory*) {
   const G4Track* track = aStep->GetTrack();
   CLHEP::Hep3Vector prePos = aStep->GetPreStepPoint()->GetPosition();
   CLHEP::Hep3Vector postPos = aStep->GetPostStepPoint()->GetPosition();
+      G4ThreeVector local =
+              aStep->GetPreStepPoint()->GetTouchable()->GetHistory()->GetTopTransform().TransformPoint(prePos);
+  std::cout << "lx: " << local.x() * MM_2_CM << "\t" << local.y() * MM_2_CM <<"\t" << local.z() * MM_2_CM<< std::endl;
+
   // create a hit and add it to collection
   // deleted in ~G4Event
   auto hit = new fcc::Geant4PreDigiTrackHit(

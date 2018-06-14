@@ -13,12 +13,15 @@ geoservice = GeoSvc("GeoSvc", detectors=['file:Detector/DetFCChhBaseline1/compac
 from Configurables import TrackingGeoSvc
 trkgeoservice = TrackingGeoSvc("TrackingGeometryService")
 
+from Configurables import SimG4ConstantMagneticFieldTool
+field = SimG4ConstantMagneticFieldTool(
+    "SimG4ConstantMagneticFieldTool", FieldOn=True, IntegratorStepper="ClassicalRK4")
 
 from Configurables import GenAlg, MomentumRangeParticleGun
 ## Particle Gun using MomentumRangeParticleGun tool and FlatSmearVertex
 # MomentumRangeParticleGun generates particles of given type(s) within given momentum, phi and theta range
 # FlatSmearVertex smears the vertex with uniform distribution
-pgun_tool = MomentumRangeParticleGun(PdgCodes=[13], ThetaMin=0., ThetaMax=3.14)
+pgun_tool = MomentumRangeParticleGun(PdgCodes=[13], ThetaMin=0.70502684, ThetaMax=0.70502684, PhiMin=0.0, PhiMax=0.0)
 gen = GenAlg("ParticleGun", SignalProvider=pgun_tool, VertexSmearingTool="FlatSmearVertex")
 gen.hepmc.Path = "hepmc"
 
@@ -41,6 +44,7 @@ extrapolationTool.collectMaterial       = TRUE
 extrapolationTool.sensitiveCurvilinear  = FALSE
 extrapolationTool.searchMode            = 1
 extrapolationTool.pathLimit             = -1.
+extrapolationTool.bFieldZ = 4.
 
 ## configure the extrapolation test
 from Configurables import ExtrapolationTest
@@ -53,7 +57,7 @@ extrapolationTest.genParticles.Path="allGenParticles"
 # Configures the Geant simulation: geometry, physics list and user actions
 from Configurables import SimG4Svc
 # giving the names of tools will initialize the tools of that type
-geantservice = SimG4Svc("SimG4Svc", detector='SimG4DD4hepDetector', physicslist="SimG4GeantinoDeposits", actions="SimG4FullSimActions")
+geantservice = SimG4Svc("SimG4Svc", detector='SimG4DD4hepDetector', physicslist="SimG4GeantinoPhysicsList", actions="SimG4FullSimActions", magneticField=field)
 
 geantservice.g4PostInitCommands  += ["/tracking/storeTrajectory 1"]
 
