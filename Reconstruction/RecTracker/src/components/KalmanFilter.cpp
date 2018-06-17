@@ -10,6 +10,8 @@
 #include "datamodel/TrackStateCollection.h"
 #include "datamodel/PositionedTrackHitCollection.h"
 
+#include "DD4hep/Detector.h"
+
 
 #include <cmath>
 #include <random>
@@ -35,21 +37,32 @@ StatusCode KalmanFilter::initialize() {
 
 StatusCode KalmanFilter::execute() {
 
+    dd4hep::DDSegmentation::BitField64* bf = new dd4hep::DDSegmentation::BitField64("system:4,layer:5,module:18,x:-15,z:-15");
+
 
     /* TODO: Input, initial state */
     const fcc::TrackStateCollection* trackSeeds = m_trackSeeds.get();
-    for (const auto& trackSeed: *trackSeeds) {
-      std::cout << "trackSeed:\t" << trackSeed.d0() << "\t" << trackSeed.z0() << "\t" << trackSeed.theta() << "\t" << trackSeed.phi() << "\t" << trackSeed.qOverP() << std::endl; 
-      std::cout << "\t refPoint: " << trackSeed.referencePoint().x << std::endl;
-    }
-
-
     const fcc::PositionedTrackHitCollection* trackHits = m_hits.get();
     for (const auto& hit: *trackHits) {
-      std::cout << "measurement: " <<  hit.position().x << std::endl;
- 
+      bf->setValue(hit.cellId());
+      std::cout << "fccsw global pos: " << "\t" << hit.position().x << "\t" << hit.position().y << "\t" << hit.position().z << std::endl;
+      double fcc2ActsM_x = 1;
+      double fcc2ActsM_y = -1;
+      if ((*bf)["system"] < 2) {
+        fcc2ActsM_y = -1;
+      } else {
+        fcc2ActsM_y = 1;
+      }
+      std::cout << "fccsw local pos: " << "\t" << (*bf)["x"] * 0.005 * fcc2ActsM_x  << "\t" << (*bf)["z"] * 0.01  * fcc2ActsM_y << std::endl;
     }
+
+    for (const auto& trackSeed: *trackSeeds) {
+      std::cout << "acts global pos: " <<"\t" << trackSeed.referencePoint().x << "\t" << trackSeed.referencePoint().y << "\t" << trackSeed.referencePoint().z << std::endl;
+      std::cout << "acts local pos: " << "\t" << trackSeed.d0() << "\t" << trackSeed.z0() << std::endl;
+    }
+
     // output
+
     auto fittedTrackCollection = m_fittedTracks.createAndPut();
 
 
