@@ -156,14 +156,15 @@ ActsExtrapolationTool::extrapolate(fcc::TrackState theTrackState) {
       if (tp) {
         if (step.surface->associatedDetectorElement()) {
         auto position = fcc::Point();
-        std::cout << "acts covariance: " << std::endl;
-        std::cout << *( tp->covariance()) << std::endl;
+        //std::cout << "acts covariance: " << std::endl;
+        //std::cout << *( tp->covariance()) << std::endl;
         position.x = tp->position().x();
         position.y = tp->position().y();
         position.z = tp->position().z();
-        std::cout << "acts full parameters" << std::endl;
-        std::cout << tp->parameters() << std::endl;
-        stateVector.emplace_back(0., 0., 0., 0., 0., position, std::array<float, 15ul>());
+        //std::cout << "acts full parameters" << std::endl;
+        //std::cout << tp->parameters() << std::endl;
+        auto pars = tp->parameters();
+        stateVector.emplace_back(pars[Acts::ePHI], pars[Acts::eTHETA], pars[Acts::eQOP], pars[Acts::eLOC_0], pars[Acts::eLOC_1], position, std::array<float, 15ul>());
         }
       }  // if track parameters
   }
