@@ -88,8 +88,13 @@ StatusCode ExtrapolationTest::execute() {
     debug() << "start extrapolation ..." << endmsg;
     auto stateVector = m_extrapolationTool->extrapolate(theTrackState);
     for (auto t: stateVector) {
-      auto theTrackstate = exTrackStateCollection->create();
-      theTrackstate.referencePoint(t.referencePoint());
+      auto outTrackstate = exTrackStateCollection->create();
+      outTrackstate.phi(t.phi());
+      outTrackstate.theta(t.theta());
+      outTrackstate.qOverP(t.qOverP());
+      outTrackstate.d0(t.d0());
+      outTrackstate.z0(t.z0());
+      outTrackstate.referencePoint(t.referencePoint());
 
       //debug
       fcc::Point _rp = t.referencePoint();
