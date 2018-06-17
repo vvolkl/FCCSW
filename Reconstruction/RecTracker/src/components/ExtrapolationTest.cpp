@@ -80,7 +80,7 @@ StatusCode ExtrapolationTest::execute() {
     double p3Mag = std::sqrt(std::pow(p4.px,2) + std::pow(p4.py,2) + std::pow(p4.pz,2));
 
     double theta = std::acos(p4.pz / p3Mag);
-    double qOverP = 1. / p3Mag * mcparticle.charge();
+    double qOverP = 1. / p3Mag * mcparticle.charge() * -1;
     double d0 = 0;
     double z0 = 0;
 
