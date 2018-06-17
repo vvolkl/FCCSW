@@ -17,11 +17,10 @@ from Configurables import SimG4ConstantMagneticFieldTool
 field = SimG4ConstantMagneticFieldTool(
     "SimG4ConstantMagneticFieldTool", FieldOn=True, IntegratorStepper="ClassicalRK4")
 
-from Configurables import GenAlg, MomentumRangeParticleGun
-## Particle Gun using MomentumRangeParticleGun tool and FlatSmearVertex
-# MomentumRangeParticleGun generates particles of given type(s) within given momentum, phi and theta range
-# FlatSmearVertex smears the vertex with uniform distribution
-pgun_tool = MomentumRangeParticleGun(PdgCodes=[13], ThetaMin=0.70502684, ThetaMax=0.70502684, PhiMin=0.0, PhiMax=0.0)
+from Configurables import ConstPtParticleGun
+pgun_tool = ConstPtParticleGun(PdgCodes=[13], EtaMin=3.1, EtaMax=3.1, PhiMin=0.0, PhiMax=0.0, PtMin=10000, PtMax=10000)
+
+from Configurables import GenAlg
 gen = GenAlg("ParticleGun", SignalProvider=pgun_tool, VertexSmearingTool="FlatSmearVertex")
 gen.hepmc.Path = "hepmc"
 
