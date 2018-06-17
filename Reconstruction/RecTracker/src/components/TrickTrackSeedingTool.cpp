@@ -22,6 +22,7 @@
 using Hit = tricktrack::TTPoint; 
 
 using namespace tricktrack;
+using namespace std::placeholders;
 
 DECLARE_TOOL_FACTORY(TrickTrackSeedingTool)
 
@@ -163,7 +164,9 @@ TrickTrackSeedingTool::findSeeds(const fcc::PositionedTrackHitCollection* theHit
   }
 
   debug() << "Create and connect cells ..."  << endmsg;
-  m_automaton->createAndConnectCells(doublets, *m_trackingRegion, m_thetaCut, m_phiCut, m_hardPtCut);
+
+  TripletFilter<Hit> ff = std::bind(defaultGeometricFilter<Hit>, _1, _2,  0.8, 0., 0., 0.002, 0.2, 0.8, 0.2 );
+  m_automaton->createAndConnectCells(doublets, ff);
   debug() << "... cells connected and created." << endmsg;
 
 
