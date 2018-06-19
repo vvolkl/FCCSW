@@ -92,24 +92,9 @@ StatusCode ActsExtrapolationTool::initialize() {
   return sc;
 }
 
-std::vector<fcc::TrackState>
-ActsExtrapolationTool::extrapolate(fcc::TrackState theTrackState) {
-  // create the start parameters
-  auto refPoint = theTrackState.referencePoint();
-  Acts::Vector3D perigee(refPoint.x, refPoint.y, refPoint.z);
-  Acts::PerigeeSurface surface(perigee);
-  double d0 = theTrackState.d0();
-  double z0 = theTrackState.z0();
-  double phi = theTrackState.phi();
-  double theta = theTrackState.theta();
-  double qop = theTrackState.qOverP();
-  // parameters
-  Acts::ActsVectorD<5> pars;
-  pars << d0, z0, phi, theta, qop;
+Acts::ExtrapolationCell<Acts::TrackParameters>
+ActsExtrapolationTool::getExtrapolationCell(const Acts::BoundParameters startParameters) {
 
-  std::unique_ptr<Acts::ActsSymMatrixD<5>> cov = std::make_unique<Acts::ActsSymMatrixD<5>>(0.00001 * Acts::ActsSymMatrixD<5>::Identity());
-  // create the bound parameters
-  Acts::BoundParameters startParameters(std::move(cov), std::move(pars), surface);
   // create the extrapolation cell & configure it
   Acts::ExtrapolationCell<Acts::TrackParameters> ecc(startParameters);
   ecc.addConfigurationMode(Acts::ExtrapolationMode::StopAtBoundary);
@@ -149,6 +134,30 @@ ActsExtrapolationTool::extrapolate(fcc::TrackState theTrackState) {
   Acts::ExtrapolationCode eCode = m_extrapolationEngine->extrapolate(ecc);
   if (eCode.isFailure()) error() << ("Extrapolation failed.") << endmsg;
   if (eCode.isSuccess()) info() << ("Extrapolation finished successfully") << endmsg;
+  return ecc;
+
+}
+
+std::vector<fcc::TrackState>
+ActsExtrapolationTool::extrapolate(fcc::TrackState theTrackState) {
+    // create the start parameters
+    auto refPoint = theTrackState.referencePoint();
+    Acts::Vector3D perigee(refPoint.x, refPoint.y, refPoint.z);
+    Acts::PerigeeSurface surface(perigee);
+    double d0 = theTrackState.d0();
+    double z0 = theTrackState.z0();
+    double phi = theTrackState.phi();
+    double theta = theTrackState.theta();
+    double qop = theTrackState.qOverP();
+
+  std::unique_ptr<Acts::ActsSymMatrixD<5>> cov = std::make_unique<Acts::ActsSymMatrixD<5>>(0.00001 * Acts::ActsSymMatrixD<5>::Identity());
+    // parameters
+    Eigen::Matrix<double, 5, 1> pars;
+    pars << d0, z0, phi, theta, qop;
+
+  // create the bound parameters
+  Acts::BoundParameters startParameters(std::move(cov), std::move(pars), surface);
+  Acts::ExtrapolationCell<Acts::TrackParameters> ecc = getExtrapolationCell(startParameters);
 
   std::vector<fcc::TrackState> stateVector;
     for (const auto& step : ecc.extrapolationSteps) {
@@ -161,8 +170,13 @@ ActsExtrapolationTool::extrapolate(fcc::TrackState theTrackState) {
         position.x = tp->position().x();
         position.y = tp->position().y();
         position.z = tp->position().z();
-        //std::cout << "acts full parameters" << std::endl;
-        //std::cout << tp->parameters() << std::endl;
+        std::cout << "acts full parameters" << std::endl;
+        std::cout << tp->parameters() << std::endl;
+        Acts::Vector2D localPos;
+        std::cout << "testing global2local..." << std::endl;
+        step.surface->globalToLocal(Acts::Vector3D(0,0, 10000), tp->momentum(), localPos);
+        std::cout << localPos << std::endl;
+        
         auto pars = tp->parameters();
         stateVector.emplace_back(pars[Acts::ePHI], pars[Acts::eTHETA], pars[Acts::eQOP], pars[Acts::eLOC_0], pars[Acts::eLOC_1], position, std::array<float, 15ul>());
         }

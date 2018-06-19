@@ -1,6 +1,7 @@
 #ifndef RECTRACKER_KALMANFILTER_H
 #define RECTRACKER_KALMANFILTER_H
 
+#include "ActsExtrapolationTool.h"
 // GAUDI
 #include "GaudiAlg/GaudiAlgorithm.h"
 #include "GaudiKernel/ToolHandle.h"
@@ -10,6 +11,7 @@
 #include "FWCore/DataHandle.h"
 
 #include "RecInterface/IKalmanMeasurementTool.h"
+#include "RecInterface/ITrackExtrapolationTool.h"
 
 
 namespace fcc {
@@ -30,6 +32,8 @@ public:
   StatusCode finalize() override final;
 
 private:
+  /// extrapolation tool
+  ToolHandle<ActsExtrapolationTool> m_extrapolationTool{"ExtrapolationTool", this};
 
   /// input for the kalman fit
   DataHandle<fcc::TrackStateCollection> m_fittedTracks{"FittedTracks", Gaudi::DataHandle::Writer,

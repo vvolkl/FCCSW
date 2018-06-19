@@ -7,6 +7,10 @@
 #include "GaudiKernel/ServiceHandle.h"
 #include "RecInterface/ITrackExtrapolationTool.h"
 
+#include "ACTS/Extrapolation/ExtrapolationCell.hpp"
+#include "ACTS/EventData/TrackParameters.hpp"
+
+
 /** @class ActsExtrapolationTool
  *
  *  Realisation of the extrapolation tool to extrapolate a track
@@ -33,6 +37,9 @@ public:
   /// charge.
   virtual std::vector<fcc::TrackState>
   extrapolate(const fcc::TrackState theTrackState) final;
+  
+  Acts::ExtrapolationCell<Acts::TrackParameters>
+  getExtrapolationCell(const Acts::BoundParameters startParameters);
 
 private:
   /// The tracking geometry service
