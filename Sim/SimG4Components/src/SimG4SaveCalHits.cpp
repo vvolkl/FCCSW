@@ -69,6 +69,7 @@ StatusCode SimG4SaveCalHits::saveOutput(const G4Event& aEvent) {
           auto edmHit = edmHits->create();
           auto& edmHitCore = edmHit.core();
           edmHitCore.cellId = hit->cellID;
+          edmHitCore.bits = hit->trackId;
           edmHitCore.energy = hit->energyDeposit * sim::g42edm::energy;
           auto position = fcc::Point();
           position.x = hit->position.x() * sim::g42edm::length;
