@@ -1,12 +1,3 @@
-
-### \file
-### \ingroup SimulationExamples
-### | **input (alg)**               | other algorithms                 |                                                         |                        |                                  | **output (alg)**                              |
-### |-------------------------------|----------------------------------|---------------------------------------------------------|------------------------|----------------------------------|-----------------------------------------------|
-### | generating single particle events from a given list of types, with momentum, phi and theta from a given range, saving to HepMC | convert `HepMC::GenEvent` to EDM | geometry parsed from XML (TestHCal.xml) by DD4hep using GeoSvc | FTFP_BERT physics list | saving HCal hits | write the EDM output to ROOT file using PODIO |
-
-
-
 from Gaudi.Configuration import *
 
 from Configurables import FCCDataSvc
@@ -14,36 +5,39 @@ from Configurables import FCCDataSvc
 podioevent = FCCDataSvc("EventDataSvc")
 
 from Configurables import GenAlg, MomentumRangeParticleGun
-## Particle Gun using MomentumRangeParticleGun tool and FlatSmearVertex
-# MomentumRangeParticleGun generates particles of given type(s) within given momentum, phi and theta range
-# FlatSmearVertex smears the vertex with uniform distribution
-guntool = MomentumRangeParticleGun()
+guntool = MomentumRangeParticleGun(PdgCodes=[13], ThetaMin=0.1, ThetaMax=0.1, PhiMin=0., PhiMax=0.,MomentumMin=100000)
 gen = GenAlg("ParticleGun", SignalProvider=guntool, VertexSmearingTool="FlatSmearVertex")
 gen.hepmc.Path = "hepmc"
 
 from Configurables import HepMCToEDMConverter
-## Reads an HepMC::GenEvent from the data service and writes a collection of EDM Particles
 hepmc_converter = HepMCToEDMConverter("Converter")
 hepmc_converter.hepmc.Path="hepmc"
 hepmc_converter.genparticles.Path="allGenParticles"
 hepmc_converter.genvertices.Path="allGenVertices"
 
 from Configurables import GeoSvc
-## DD4hep geometry service
-# Parses the given xml file
 geoservice = GeoSvc("GeoSvc", detectors=['file:Detector/DetFCChhBaseline1/compact/FCChh_DectEmptyMaster.xml',
                                          'file:Detector/DetFCChhTrackerTkLayout/compact/Tracker.xml',
                                          'file:Detector/DetFCChhECalInclined/compact/FCChh_ECalBarrel_withCryostat.xml',
                                          'file:Detector/DetFCChhCalDiscs/compact/Endcaps_coneCryo.xml',
                                          'file:Detector/DetFCChhCalDiscs/compact/Forward_coneCryo.xml',
-                                         'file:Detector/DetFCChhHCalTile/compact/FCChh_HCalBarrel_TileCal.xml'],
+                                         ],
                     OutputLevel = INFO)
+
+from Configurables import SimG4Svc, SimG4FullSimActions
+actions = SimG4FullSimActions()
+actions.enableHistory=True
+
+from Configurables import SimG4ConstantMagneticFieldTool
+field = SimG4ConstantMagneticFieldTool(
+    "SimG4ConstantMagneticFieldTool", FieldOn=True, IntegratorStepper="ClassicalRK4")
 
 from Configurables import SimG4Svc
 ## Geant4 service
 # Configures the Geant simulation: geometry, physics list and user actions
 geantservice = SimG4Svc("SimG4Svc", detector='SimG4DD4hepDetector', physicslist="SimG4FtfpBert",
-                        actions="SimG4FullSimActions")
+                        actions=actions, magneticField=field)
+
 
 from Configurables import SimG4Alg, SimG4SaveTrackerHits, SimG4SaveCalHits, SimG4PrimariesFromEdmTool
 ## Geant4 algorithm
@@ -51,6 +45,12 @@ from Configurables import SimG4Alg, SimG4SaveTrackerHits, SimG4SaveCalHits, SimG
 # first, create a tool that saves the tracker hits
 # Name of that tool in GAUDI is "XX/YY" where XX is the tool class name ("SimG4SaveTrackerHits")
 # and YY is the given name ("saveTrackerHits")
+
+from Configurables import SimG4SaveParticleHistory
+savehisttool = SimG4SaveParticleHistory("saveHistory")
+savehisttool.mcParticles.Path = "simParticles"
+savehisttool.genVertices.Path = "simVertices"
+
 savetrackertool = SimG4SaveTrackerHits("saveTrackerHits", readoutNames = ["TrackerBarrelReadout", "TrackerEndcapReadout"])
 savetrackertool.positionedTrackHits.Path = "positionedHits"
 savetrackertool.trackHits.Path = "hits"
@@ -64,21 +64,18 @@ saveendcaptool.caloHits.Path = "ECalEndcapHits"
 savefwdtool = SimG4SaveCalHits("saveECalFwdHits", readoutNames = ["EMFwdPhiEta"])
 savefwdtool.positionedCaloHits.Path = "ECalFwdPositionedHits"
 savefwdtool.caloHits.Path = "ECalFwdHits"
-savehcaltool = SimG4SaveCalHits("saveHCalHits", readoutNames = ["HCalBarrelReadout"])
-savehcaltool.positionedCaloHits.Path = "HCalBarrelPositionedHits"
-savehcaltool.caloHits.Path = "HCalBarrelHits"
 # next, create the G4 algorithm, giving the list of names of tools ("XX/YY")
 particle_converter = SimG4PrimariesFromEdmTool("EdmConverter")
 particle_converter.genParticles.Path = "allGenParticles"
 geantsim = SimG4Alg("SimG4Alg",
-                    outputs = ["SimG4SaveTrackerHits/saveTrackerHits", "SimG4SaveCalHits/saveECalBarrelHits", "SimG4SaveCalHits/saveECalEndcapHits", "SimG4SaveCalHits/saveECalFwdHits", "SimG4SaveCalHits/saveHCalHits"],
+                    outputs = ["SimG4SaveTrackerHits/saveTrackerHits", "SimG4SaveCalHits/saveECalBarrelHits", "SimG4SaveCalHits/saveECalEndcapHits", "SimG4SaveCalHits/saveECalFwdHits", "SimG4SaveParticleHistory/saveHistory"],
                     eventProvider=particle_converter)
 
 from Configurables import PodioOutput
 out = PodioOutput("out",
                    OutputLevel=DEBUG)
 out.outputCommands = ["keep *"]
-out.filename = "output_geant_pgun_fullsim.root"
+out.filename = "output_calo_hit_matching.root"
 
 from Configurables import ApplicationMgr
 ApplicationMgr( TopAlg=[gen, hepmc_converter, geantsim, out],
