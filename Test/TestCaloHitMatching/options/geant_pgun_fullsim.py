@@ -80,7 +80,7 @@ out.filename = "output_calo_hit_matching.root"
 from Configurables import ApplicationMgr
 ApplicationMgr( TopAlg=[gen, hepmc_converter, geantsim, out],
                 EvtSel='NONE',
-                EvtMax=1,
+                EvtMax=3,
                 ## order is important, as GeoSvc is needed by SimG4Svc
                 ExtSvc=[podioevent, geoservice, geantservice],
                 OutputLevel=INFO

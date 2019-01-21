@@ -84,7 +84,7 @@
         <passive>
           <rotation angle="50*degree"/>
 	       <inner thickness="Pb_thickness" sensitive="false">
-            <material name="Lead"/>
+            <material name="Copper"/>
           </inner>
 	       <glue thickness="Glue_thickness" sensitive="false">
             <material name="lArCaloGlue"/>

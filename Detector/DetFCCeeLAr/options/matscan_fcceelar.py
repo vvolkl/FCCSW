@@ -17,7 +17,7 @@ from Configurables import MaterialScan
 # For instance adding envelopeName="BoundaryPostCalorimetry" will perform the scan only till the end of calorimetry.
 # BoundaryPostCalorimetry is defined in Detector/DetFCChhECalInclined/compact/envelopePreCalo.xml
 materialservice = MaterialScan()
-materialservice.filename="DD4hep_material_scan.root"
+materialservice.filename="matscan_fcceelar_ecal_v0.1.root"
 materialservice.etaBinning=0.05
 materialservice.etaMax=6
 materialservice.nPhiTrials=10

@@ -27,8 +27,8 @@
 
 
   <include ref="../../DetFCCeeECalInclined/compact/FCCee_ECalBarrel_noCryostat.xml" />
+  <include ref="../../DetFCChhHCalTile/compact/FCChh_HCalBarrel_TileCal.xml" />
 
   <!--
-  <include ref="../../DetFCChhHCalTile/compact/FCChh_HCalBarrel_TileCal.xml" />
   -->
 </lccdd>

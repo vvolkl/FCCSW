@@ -22,29 +22,18 @@
     <constant name="world_y" value="world_size"/>
     <constant name="world_z" value="world_size"/>
   </define>
-  <include ref="./FCChh_DectDimensions.xml" />
-  <include ref="./FCChh_Visualisation.xml" />
+  <include ref="../../DetFCChhBaseline1/compact/FCChh_DectDimensions.xml" />
+  <include ref="../../DetFCChhBaseline1/compact/FCChh_Visualisation.xml" />
 
-  <!-- Including the sub-detectors / volume definitions -->
-  <!-- To be used in case you are not using the tkLayout tracker (which contains the beamtube)
-  <include ref="./FCChh_BeamTube.xml" />
+  <!-- 
   <include ref="../../DetFCChhHCalTile/compact/FCChh_HCalBarrel_TileCal.xml" />
-  <include ref="../../DetFCChhHCalTile/compact/FCChh_HCalExtendedBarrel_TileCal.xml" />
   <include ref="../../DetFCChhTailCatcher/compact/FCChh_TailCatcher.xml" />
+  <include ref="../../DetFCChhHCalTile/compact/FCChh_HCalExtendedBarrel_TileCal.xml" />
+  <include ref="../../DetFCChhBaseline1/FCChh_Solenoids.xml" />
+  <include ref="../../DetFCChhBaseline1/FCChh_Shielding.xml" />
   -->
-  <include ref="./FCChh_Solenoids.xml" />
-  <include ref="./FCChh_Shielding.xml" />
 
-  <include ref="../../DetFCChhTrackerTkLayout/compact/Tracker.xml" />
+
   <include ref="../../DetFCChhECalInclined/compact/FCChh_ECalBarrel_withCryostat.xml" />
-  <!-- To uncomment once issue #227 is solved: <include ref="../../DetFCChhCalDiscs/compact/Endcaps_coneCryo.xml" /> -->
-  <!-- To uncomment once issue #227 is solved: <include ref="../../DetFCChhCalDiscs/compact/Forward_coneCryo.xml" /> -->
 
-  <!--
-    These can be used as replacement if you want to use only a sub-set of detectors:
-    <include ref="./FCChh_TrackerAir.xml" />
-    <include ref="./FCChh_ECalAir.xml" />
-    <include ref="../../DetCommon/compact/HcalAir.xml" />
-    <include ref="./FCChh_MuonAir.xml" />
--->
 </lccdd>

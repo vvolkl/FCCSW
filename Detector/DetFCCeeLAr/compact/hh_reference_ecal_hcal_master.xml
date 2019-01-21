@@ -22,13 +22,18 @@
     <constant name="world_y" value="world_size"/>
     <constant name="world_z" value="world_size"/>
   </define>
-  <include ref="./dimensions.xml" />
+  <include ref="../../DetFCChhBaseline1/compact/FCChh_DectDimensions.xml" />
   <include ref="../../DetFCChhBaseline1/compact/FCChh_Visualisation.xml" />
 
-
-  <include ref="../../DetFCCeeECalInclined/compact/FCCee_ECalBarrel_noCryostat.xml" />
-
-  <!--
-  <include ref="../../DetFCChhHCalTile/compact/FCChh_HCalBarrel_TileCal.xml" />
+  <!-- 
+  <include ref="../../DetFCChhTailCatcher/compact/FCChh_TailCatcher.xml" />
+  <include ref="../../DetFCChhHCalTile/compact/FCChh_HCalExtendedBarrel_TileCal.xml" />
+  <include ref="../../DetFCChhBaseline1/FCChh_Solenoids.xml" />
+  <include ref="../../DetFCChhBaseline1/FCChh_Shielding.xml" />
   -->
+
+
+  <include ref="../../DetFCChhECalInclined/compact/FCChh_ECalBarrel_withCryostat.xml" />
+  <include ref="../../DetFCChhHCalTile/compact/FCChh_HCalBarrel_TileCal.xml" />
+
 </lccdd>
