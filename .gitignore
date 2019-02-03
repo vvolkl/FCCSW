@@ -3,6 +3,9 @@
 *.root
 *.png
 
+# gaudi
+.gaudi_project_ignore
+
 *.log
 build.*.log
 Makefile
