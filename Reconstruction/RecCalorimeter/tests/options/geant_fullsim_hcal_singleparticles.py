@@ -1,7 +1,7 @@
 # variables energy (energy in MeV!!!!), magnetic_field (0,1), num_events (number of events) to be defined before running
 energy = 50000
 magnetic_field = 0
-num_events = 10
+num_events = 1
 
 from Gaudi.Configuration import *
 
@@ -39,7 +39,7 @@ geantservice.g4PreInitCommands += ["/run/setCut 0.1 mm"]
 # Translates EDM to G4Event, passes the event to G4, writes out outputs via tools
 # and a tool that saves the calorimeter hits
 from Configurables import SimG4Alg, SimG4SaveCalHits, InspectHitsCollectionsTool
-savehcaltool = SimG4SaveCalHits("saveHCalHits",readoutNames = ["BarHCal_Readout"])
+savehcaltool = SimG4SaveCalHits("saveHCalHits",readoutNames = ["HCalBarrelReadout"])
 savehcaltool.positionedCaloHits.Path = "HCalPositionedHits"
 savehcaltool.caloHits.Path = "HCalHits"
 # Change INFO to DEBUG for printout of each deposit
@@ -60,7 +60,7 @@ from Configurables import PodioOutput
 out = PodioOutput("out",
                    OutputLevel=DEBUG)
 out.outputCommands = ["keep *"]
-out.filename = "output_hcalSim_e"+str(int(energy/1000))+"GeV_eta036_10events.root"
+out.filename = "output_hcalSim_e"+str(int(energy/1000))+"GeV_eta036_1events.root"
 
 #CPU information
 from Configurables import AuditorSvc, ChronoAuditor

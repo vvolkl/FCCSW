@@ -7,7 +7,7 @@ gaudi_subdir(Examples v1r0)
 gaudi_depends_on_subdirs(GaudiAlg FWCore Sim/SimG4Interface Detector/DetInterface)
 
 find_package(ROOT COMPONENTS MathCore GenVector Geom)
-find_package(DD4hep COMPONENTS DDG4 DDSegmentation REQUIRED)
+find_package(DD4hep COMPONENTS DDG4 REQUIRED)
 include(DD4hep)
 find_package(Geant4)
 
@@ -44,9 +44,6 @@ gaudi_add_test(ReadFullSimTrackerHits
                WORKING_DIRECTORY ${PROJECT_SOURCE_DIR}
                FRAMEWORK options/read_podio_input.py
                DEPENDS GeantFullSimTrackerHitsWithField)
-gaudi_add_test(GeantFullSimWithGeantino
-               WORKING_DIRECTORY ${PROJECT_SOURCE_DIR}
-               FRAMEWORK options/geant_fullsim_pgun_geantino.py)
 gaudi_add_test(GeantFullSimParticleGun
                WORKING_DIRECTORY ${PROJECT_SOURCE_DIR}
                FRAMEWORK options/geant_pgun_fullsim.py)
@@ -64,6 +61,21 @@ gaudi_add_test(ExampleOptions
                FRAMEWORK options/example_options.py)
 gaudi_add_test(DumpGDML
                FRAMEWORK options/dumpGeo.py)
+gaudi_add_test(PileupOverlay
+               WORKING_DIRECTORY ${PROJECT_SOURCE_DIR}
+               FRAMEWORK options/overlaySignalAndPileup.py
+               DEPENDS GeantFullSimTrackerHitsWithField GeantFullSimParticleGun)
+gaudi_add_test(CheckMergeCollection
+               ENVIRONMENT PYTHONPATH+=$ENV{PODIO}/python
+               WORKING_DIRECTORY ${PROJECT_SOURCE_DIR}
+               COMMAND python FWCore/tests/scripts/check_coll_after_merge.py
+               DEPENDS PileupOverlay)
+gaudi_add_test(GeantUserLimits
+               WORKING_DIRECTORY ${PROJECT_SOURCE_DIR}
+               FRAMEWORK options/geant_userLimits.py)
+gaudi_add_test(GeantFullSimParticleGunFCCee
+               WORKING_DIRECTORY ${PROJECT_SOURCE_DIR}
+               FRAMEWORK options/geant_fullsim_fccee_pgun.py)
 
 # Test of the format-checker:
 gaudi_add_test(FormatCheckerOneFile

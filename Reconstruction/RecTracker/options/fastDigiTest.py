@@ -12,9 +12,6 @@ pgun_tool = MomentumRangeParticleGun(PdgCodes=[13], PhiMin=0., PhiMax=constants.
 gen = GenAlg("ParticleGun", SignalProvider=pgun_tool)
 gen.hepmc.Path = "hepmc"
 
-from Configurables import Gaudi__ParticlePropertySvc
-ppservice = Gaudi__ParticlePropertySvc("ParticlePropertySvc", ParticlePropertiesFile="Generation/data/ParticleTable.txt")
-
 from Configurables import GeoSvc
 geoservice = GeoSvc("GeoSvc", detectors=['file:Detector/DetFCChhBaseline1/compact/FCChh_DectEmptyMaster.xml',
   'file:Detector/DetFCChhTrackerTkLayout/compact/Tracker.xml',
@@ -63,8 +60,8 @@ out.filename="fastDigi_Example.root"
 from Configurables import ApplicationMgr
 ApplicationMgr( TopAlg = [gen, hepmc_converter, geantsim, fastdigi, out],
                 EvtSel = 'NONE',
-                EvtMax   = 10,
+                EvtMax   = 1,
                 # order is important, as GeoSvc is needed by SimG4Svc
-                ExtSvc = [podioevent, geoservice, geantservice, ppservice,],
+                ExtSvc = [podioevent, geoservice, geantservice,],
                 OutputLevel=DEBUG
  )

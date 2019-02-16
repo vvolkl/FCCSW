@@ -2,7 +2,7 @@ from Gaudi.Configuration import *
 
 from Configurables import ApplicationMgr, FCCDataSvc, PodioOutput
 
-podioevent   = FCCDataSvc("EventDataSvc", input="output_hcalSim_e50GeV_eta036_10events.root")
+podioevent   = FCCDataSvc("EventDataSvc", input="output_hcalSim_e50GeV_eta036_1events.root")
 
 # reads HepMC text file and write the HepMC::GenEvent to the data service
 from Configurables import PodioInput
@@ -15,18 +15,20 @@ geoservice = GeoSvc("GeoSvc", detectors=[  'file:Detector/DetFCChhBaseline1/comp
 
 # common HCAL specific information
 # readout name
-hcalReadoutName = "BarHCal_Readout"
+hcalReadoutName = "HCalBarrelReadout"
 # active material identifier name
-hcalIdentifierName = ["module", "row", "layer", "tile"]
+hcalIdentifierName = ["module", "row", "layer"]
 # active material volume name
-hcalVolumeName = ["moduleVolume", "wedgeVolume", "layerVolume", "modCompVolume"]
+hcalVolumeName = ["moduleVolume", "wedgeVolume", "layerVolume"]
 # ECAL bitfield names & values
 hcalFieldNames=["system"]
 hcalFieldValues=[8]
 
 #Configure tools for calo reconstruction
 from Configurables import CalibrateCaloHitsTool, NoiseCaloCellsFlatTool, NestedVolumesCaloTool
-noise = NoiseCaloCellsFlatTool("HCalNoise")
+calibHcells = CalibrateCaloHitsTool("CalibrateHCal", invSamplingFraction="41.7 ")
+noise = NoiseCaloCellsFlatTool("HCalNoise",
+                               cellNoise = 0.01)
 hcalgeo = NestedVolumesCaloTool("HcalGeo",
                                  activeVolumeName = hcalVolumeName,
                                  activeFieldName = hcalIdentifierName,
@@ -38,7 +40,8 @@ hcalgeo = NestedVolumesCaloTool("HcalGeo",
 from Configurables import CreateCaloCells
 createcells = CreateCaloCells("CreateCaloCells",
                               geometryTool = hcalgeo,
-                              doCellCalibration = False,
+                              calibTool=calibHcells,
+                              doCellCalibration = True,
                               addCellNoise = True, filterCellNoise = False,
                               noiseTool = noise,
                               OutputLevel = DEBUG)
@@ -64,7 +67,7 @@ ApplicationMgr(
               out
               ],
     EvtSel = 'NONE',
-    EvtMax   = 10,
+    EvtMax   = 1,
     ExtSvc = [podioevent, geoservice],
  )
 

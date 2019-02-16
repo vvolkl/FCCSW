@@ -2,7 +2,7 @@ from Gaudi.Configuration import *
 
 from Configurables import ApplicationMgr, FCCDataSvc, PodioOutput
 
-podioevent   = FCCDataSvc("EventDataSvc", input="output_hcalSim_e50GeV_eta036_10events.root")
+podioevent   = FCCDataSvc("EventDataSvc", input="output_hcalSim_e50GeV_eta036_1events.root")
 
 # reads HepMC text file and write the HepMC::GenEvent to the data service
 from Configurables import PodioInput
@@ -13,9 +13,14 @@ geoservice = GeoSvc("GeoSvc", detectors=[  'file:Detector/DetFCChhBaseline1/comp
                                            'file:Detector/DetFCChhHCalTile/compact/FCChh_HCalBarrel_TileCal.xml'],
                     OutputLevel = INFO)
 
+#Configure tools for calo reconstruction
+from Configurables import CalibrateCaloHitsTool
+calibHcells = CalibrateCaloHitsTool("CalibrateHCal", invSamplingFraction="41.7 ")
+
 from Configurables import CreateCaloCells
 createcells = CreateCaloCells("CreateCaloCells",
-                              doCellCalibration = False,
+                              calibTool=calibHcells,
+                              doCellCalibration = True,
                               addCellNoise = False, filterCellNoise = False,
                               OutputLevel = DEBUG)
 createcells.hits.Path="HCalHits"
@@ -40,7 +45,7 @@ ApplicationMgr(
               out
               ],
     EvtSel = 'NONE',
-    EvtMax   = 10,
+    EvtMax   = 1,
     ExtSvc = [podioevent, geoservice],
  )
 
