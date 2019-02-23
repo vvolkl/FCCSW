@@ -20,7 +20,7 @@ gaudi_add_module(Generation
                  INCLUDE_DIRS Generation HepMC Pythia8 FWCore FCCEDM PODIO HepPDT
                  LINK_LIBRARIES HepMC GaudiAlgLib Pythia8 FCCEDM PODIO HepPDT)
 
-install(DIRECTORY ${CMAKE_CURRENT_LIST_DIR}/data DESTINATION Generation)
+install(DIRECTORY ${CMAKE_CURRENT_LIST_DIR}/data DESTINATION share/fccsw/pythiacards)
 
 include(CTest)
 
