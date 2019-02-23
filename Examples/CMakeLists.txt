@@ -17,6 +17,8 @@ gaudi_add_module(Examples
                  LINK_LIBRARIES GaudiAlgLib FWCore ROOT GaudiKernel DD4hep ${DD4hep_COMPONENT_LIBRARIES} Geant4)
 
 
+install(DIRECTORY ${CMAKE_CURRENT_LIST_DIR}/options DESTINATION share/fccsw/examples)
+
 include(CTest)
 
 # These are the simple examples defined for doc/AddingTestsToFCCSW.md
