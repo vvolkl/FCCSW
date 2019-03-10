@@ -11,6 +11,7 @@ find_package(PODIO)
 find_package(DD4hep)
 find_package(ROOT REQUIRED COMPONENTS Geom)
 find_package(Acts COMPONENTS Core IdentificationPlugin TGeoPlugin DD4hepPlugin Legacy)
+find_package(tricktrack)
 
 
 gaudi_install_headers(RecTracker)
@@ -19,12 +20,12 @@ gaudi_add_library(TrackingUtils
                  src/lib/*.cpp
                  INCLUDE_DIRS DD4hep HepMC  FWCore  FCCEDM PODIO  DetInterface RecInterface SimG4Interface ROOT
                  LINK_LIBRARIES GaudiAlgLib FCCEDM PODIO DD4hep ROOT 
-                 PUBLIC_HEADERS RecTracker tricktrack) 
+                 PUBLIC_HEADERS RecTracker) 
 
 gaudi_add_module(RecTracker
                  src/components/*.cpp
-                 INCLUDE_DIRS DD4hep Geant4 FWCore SimG4Common SimG4Interface  ROOT RecInterface TrackingUtils Acts
-                 LINK_LIBRARIES ROOT GaudiAlgLib FCCEDM PODIO DD4hep TrackingUtils ActsCore ActsDD4hepPlugin ActsLegacy)
+                 INCLUDE_DIRS DD4hep Geant4 FWCore SimG4Common SimG4Interface  ROOT RecInterface TrackingUtils Acts ${tricktrack_INCLUDE_DIR}
+                 LINK_LIBRARIES ROOT GaudiAlgLib FCCEDM PODIO DD4hep TrackingUtils ActsCore ActsDD4hepPlugin ActsLegacy ${tricktrack_LIBRARIES})
 
 
 gaudi_add_library(ActsLogger
