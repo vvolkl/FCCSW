@@ -65,7 +65,6 @@ DataHandle<T>::DataHandle(const std::string& descriptor, Gaudi::DataHandle::Mode
   if (a > 15) {
   m_eds.retrieve();
   PodioDataSvc* pds = dynamic_cast<PodioDataSvc*>( m_eds.get());
-  pds->debugprintout();
   m_dataPtr = 0;
   //T* t = new T();
   //std::string typeName = typeid(*t).name();
@@ -73,8 +72,11 @@ DataHandle<T>::DataHandle(const std::string& descriptor, Gaudi::DataHandle::Mode
   if (std::is_convertible<T*,podio::CollectionBase*>::value) {
     // still handled in PodioOutput
   } else {
+    if (pds != nullptr) {
     TTree* tree = pds->eventDataTree();
     tree->Branch(descriptor.c_str(),  &m_dataPtr);
+    }
+
       //tree->Branch(descriptor.c_str(),  &m_data, (descriptor+"/"+typeName).c_str());
     }
   }

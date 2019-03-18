@@ -3,6 +3,8 @@
 
 #include "G4UserTrackingAction.hh"
 
+#include "G4LorentzVector.hh"
+
 /** @class ParticleHistoryAction SimG4Full/SimG4Full/ParticleHistoryAction.h ParticleHistoryAction.h
  *
  *  User tracking action that stores particle history
@@ -32,6 +34,9 @@ public:
 private:
   /// energy threshold for secondaries to be saved
   double m_energyCut;
+  G4LorentzVector m_initialPos;
+  G4LorentzVector m_initialEnergy;
+
 };
 }
 

@@ -13,8 +13,7 @@ class IGeoSvc;
 
 // datamodel
 namespace fcc {
-class GenVertexCollection;
-class MCParticleCollection;
+  class G4ParticleData;
 }
 
 namespace sim {
@@ -42,14 +41,8 @@ public:
   StatusCode saveOutput(const G4Event& aEvent) override final;
 
 private:
-  /// Handle for collection of MC particles to create
-  DataHandle<fcc::MCParticleCollection> m_mcParticles{"sim/secondaries", Gaudi::DataHandle::Writer, this};
-  /// Handle for the vertex collection to create
-  DataHandle<fcc::GenVertexCollection> m_genVertices{"sim/secondaryVertices", Gaudi::DataHandle::Writer, this};
-  /// Pointer to the vertex collection, ownership should be handled in a algorithm / tool
-  fcc::GenVertexCollection* m_genVertexColl;
-  /// Pointer to the particle collection, ownership should be handled in a algorithm / tool
-  fcc::MCParticleCollection* m_mcParticleColl;
+  DataHandle<std::vector<fcc::G4ParticleData>> m_particleDataHandle{"sim/SimParticles", Gaudi::DataHandle::Writer, this};
+  std::vector<fcc::G4ParticleData>* m_particleData;
 };
 
 #endif /* SIMG4COMPONENTS_SIMG4SAVEPARTICLEHISTORY_H */
