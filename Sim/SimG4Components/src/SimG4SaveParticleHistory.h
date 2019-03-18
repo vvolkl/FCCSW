@@ -13,7 +13,7 @@ class IGeoSvc;
 
 // datamodel
 namespace fcc {
-  class G4ParticleData;
+  class SimParticleData;
 }
 
 namespace sim {
@@ -41,8 +41,8 @@ public:
   StatusCode saveOutput(const G4Event& aEvent) override final;
 
 private:
-  DataHandle<std::vector<fcc::G4ParticleData>> m_particleDataHandle{"sim/SimParticles", Gaudi::DataHandle::Writer, this};
-  std::vector<fcc::G4ParticleData>* m_particleData;
+  DataHandle<std::vector<fcc::SimParticleData>> m_particleDataHandle{"sim/SimParticles", Gaudi::DataHandle::Writer, this};
+  std::vector<fcc::SimParticleData>* m_particleData;
 };
 
 #endif /* SIMG4COMPONENTS_SIMG4SAVEPARTICLEHISTORY_H */

@@ -4,7 +4,6 @@
 #include "G4VUserEventInformation.hh"
 #include "G4LorentzVector.hh"
 
-#include "SimG4Common/G4ParticleData.h"
 
 #include <iostream>
 #include <map>
@@ -12,8 +11,7 @@
 
 class G4Track;
 namespace fcc {
-class GenVertexCollection;
-class MCParticleCollection;
+  class SimParticleData;
 }
 
 /** @class sim::EventInformation SimG4Common/SimG4Common/EventInformation.h EventInformation.h
@@ -36,7 +34,7 @@ public:
    * @param[in] aGenVertexCollection  pointer to a collection that should take ownership of the particles saved here
    * @param[in] aMCParticleCollection  pointer to a collection that should take ownership of the particles saved here
    */
-  void setCollections(std::vector<fcc::G4ParticleData>*& aParticleDataVector);
+  void setCollections(std::vector<fcc::SimParticleData>*& aParticleDataVector);
   /// Add a particle to be tracked in the EDM collections
   void addParticle(const G4Track* aSecondary, G4LorentzVector initialPos, G4LorentzVector
   initialEnergy);
@@ -44,7 +42,7 @@ public:
   void Print() const {};
 
 private:
-  std::vector<fcc::G4ParticleData>* m_particleData;
+  std::vector<fcc::SimParticleData>* m_particleData;
 };
 }
 #endif /* define SIMG4COMMON_EVENTINFORMATION_H */

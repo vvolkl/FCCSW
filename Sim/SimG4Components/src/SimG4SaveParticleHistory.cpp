@@ -3,7 +3,7 @@
 // FCCSW
 #include "SimG4Common/ParticleInformation.h"
 #include "SimG4Common/Units.h"
-#include "SimG4Common/G4ParticleData.h"
+#include "utilities/SimParticleData.h"
 
 // Geant4
 #include "G4Event.hh"
@@ -11,9 +11,6 @@
 #include "G4PrimaryParticle.hh"
 #include "G4PrimaryVertex.hh"
 
-// datamodel
-#include "datamodel/GenVertexCollection.h"
-#include "datamodel/MCParticleCollection.h"
 
 DECLARE_TOOL_FACTORY(SimG4SaveParticleHistory)
 
