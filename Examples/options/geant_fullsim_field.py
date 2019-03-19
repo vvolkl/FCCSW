@@ -17,8 +17,8 @@ gen.hepmc.Path = "hepmc"
 # DD4hep geometry service
 # Parses the given xml file
 from Configurables import GeoSvc
-geoservice = GeoSvc("GeoSvc", detectors=['file:Detector/DetFCChhBaseline1/compact/FCChh_DectEmptyMaster.xml',
-  'file:Detector/DetFCChhTrackerTkLayout/compact/Tracker.xml'],
+geoservice = GeoSvc("GeoSvc", detectors=[
+  'file:Detector/DetTrackerSimple/compact/standalone.xml'],
                     OutputLevel = INFO)
 
 from Configurables import HepMCToEDMConverter
@@ -75,8 +75,8 @@ out.filename = "tracker_with_field.root"
 from Configurables import ApplicationMgr
 ApplicationMgr(TopAlg=[gen, hepmc_converter, geantsim, out],
                EvtSel='NONE',
-               EvtMax=2,
+               EvtMax=10,
                # order is important, as GeoSvc is needed by SimG4Svc
                ExtSvc=[podioevent, geoservice, geantservice],
-               OutputLevel=DEBUG
+               OutputLevel=INFO
                )

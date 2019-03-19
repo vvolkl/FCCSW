@@ -41,7 +41,7 @@ public:
   StatusCode saveOutput(const G4Event& aEvent) override final;
 
 private:
-  DataHandle<std::vector<fcc::SimParticleData>> m_particleDataHandle{"sim/SimParticles", Gaudi::DataHandle::Writer, this};
+  DataHandle<std::vector<fcc::SimParticleData>> m_particleDataHandle{"SimParticles", Gaudi::DataHandle::Writer, this};
   std::vector<fcc::SimParticleData>* m_particleData;
 };
 
