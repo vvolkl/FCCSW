@@ -14,7 +14,7 @@ geoservice = GeoSvc("GeoSvc", detectors=['Detector/DetFCCeeIDEA/compact/FCCee_De
 
 from Configurables import SimG4ConstantMagneticFieldTool
 field = SimG4ConstantMagneticFieldTool("SimG4ConstantMagneticFieldTool", FieldOn=True, 
-                                       IntegratorStepper="ClassicalRK4", FieldComponentZ=0.000,
+                                       IntegratorStepper="ClassicalRK4", FieldComponentZ=2.000,
                                        MaximumStep=10000.0)
 
 # Geant4 service
@@ -34,7 +34,7 @@ geantservice = SimG4Svc("SimG4Svc", detector='SimG4DD4hepDetector', physicslist=
                         magneticField=field)
 
 geantservice.g4PostInitCommands +=["/process/eLoss/minKinEnergy 1 MeV"]
-geantservice.g4PostInitCommands  += ["/tracking/storeTrajectory 1"]
+#geantservice.g4PostInitCommands  += ["/tracking/storeTrajectory 1"]
 
 # Geant4 algorithm
 # Translates EDM to G4Event, passes the event to G4, writes out outputs via tools
@@ -42,13 +42,12 @@ from Configurables import SimG4Alg, SimG4SaveTrackerHits, SimG4SaveTrajectory, S
 # first, create a tool that saves the tracker hits
 # Name of that tool in GAUDI is "XX/YY" where XX is the tool class name ("SimG4SaveTrackerHits")
 # and YY is the given name ("saveTrackerHits")
-savetrajectorytool = SimG4SaveTrajectory("saveTrajectory")
-savetrajectorytool.trajectory.Path = "trajectory"
-savetrajectorytool.trajectoryPoints.Path = "trajectoryPoints"
+#savetrajectorytool = SimG4SaveTrajectory("saveTrajectory")
+#savetrajectorytool.trajectory.Path = "trajectory"
+#savetrajectorytool.trajectoryPoints.Path = "trajectoryPoints"
 
 savehisttool = SimG4SaveParticleHistory("saveHistory")
-savehisttool.mcParticles.Path = "simParticles"
-savehisttool.genVertices.Path = "simVertices"
+savehisttool.SimParticles.Path = "SimParticles"
 
 savetrackertool = SimG4SaveTrackerHits("saveTrackerHits_Barrel", readoutNames = ["VertexBarrelCollection"])
 savetrackertool.positionedTrackHits.Path = "positionedHits_barrel"
@@ -67,7 +66,7 @@ savetrackertool_DCH.trackHits.Path = "hits_DCH"
 savetrackertool_DCH.digiTrackHits.Path = "digiHits_DCH"
 
 
-pgun = SimG4SingleParticleGeneratorTool("GeantinoGun", etaMin=-0.1, etaMax=0.1, phiMin=0, phiMax=6.2831853, 
+pgun = SimG4SingleParticleGeneratorTool("GeantinoGun", etaMin=-4, etaMax=4, phiMin=0, phiMax=6.2831853, 
                                         particleName="mu-", energyMin=100000, energyMax=100000)
 
 
@@ -91,7 +90,7 @@ out.outputCommands = ["keep *"]
 from Configurables import ApplicationMgr
 ApplicationMgr( TopAlg = [geantsim, out],
                 EvtSel = 'NONE',
-                EvtMax   = 1,
+                EvtMax   = 10000,
                 # order is important, as GeoSvc is needed by SimG4Svc
                 ExtSvc = [podioevent, geoservice, geantservice],
                 OutputLevel=INFO
