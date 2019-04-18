@@ -2,7 +2,7 @@ pipeline {
     agent any
 
     stages {
-        stage('Build') {
+        stage('Build-centos7') {
             agent {
               label "centos7"
             }
@@ -13,7 +13,8 @@ pipeline {
                 
                 """
             }
-        stage('Build') {
+        }
+        stage('Build-slc6') {
             agent {
               label "slc6"
             }
@@ -24,5 +25,6 @@ pipeline {
                 
                 """
             }
+          }
     }
 }
