@@ -3,20 +3,26 @@ pipeline {
 
     stages {
         stage('Build') {
-            steps {
-                sh "mkdir build || true; cd build && cmake .. && make;"
+            agent {
+              label "centos7"
             }
-        }
-        stage('Test') {
             steps {
-                echo 'Testing..'
-                sh "cd build && make test"
+                sh """
+                source /cvmfs/fcc.cern.ch/sw/views/releases/externals/94.2.0/x86_64-centos7-gcc62-opt/setup.sh
+                make -j `getconf _NPROCESSORS_ONLN` && make test
+                
+                """
             }
-        }
-        stage('Deploy') {
+        stage('Build') {
+            agent {
+              label "slc6"
+            }
             steps {
-                echo 'Deploying.... (skip)'
+                sh """
+                source /cvmfs/fcc.cern.ch/sw/views/releases/externals/94.2.0/x86_64-slc6-gcc62-opt/setup.sh
+                make -j `getconf _NPROCESSORS_ONLN` && make test
+                
+                """
             }
-        }
     }
 }
