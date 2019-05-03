@@ -40,8 +40,9 @@ geoservice.OutputLevel=INFO
 # Configures the Geant simulation: geometry, physics list and user actions
 from Configurables import SimG4Svc, SimG4FastSimPhysicsList, SimG4ParticleSmearFormula, SimG4FastSimTrackerRegion, SimG4GflashSamplingCalo, SimG4FastSimCalorimeterRegion
 ## create particle smearing tool, used for smearing in the tracker
-momentumResolutionFormula = " (abs([eta]) >= 0.0000 && abs([eta]) < 0.1000) * ([energy] >= 0.0000 && [energy] < 1.0000) * (0.00315864) + \
-(abs([eta]) >= 0.0000 && abs([eta]) < 0.1000) * ([energy] >= 1.0000 ) * (0.003159 + ([energy]-1.000000)* 0.000007)"
+from FCChhTkLayoutResolutionFormula import momentumResolutionFormula 
+#momentumResolutionFormula = " (abs([eta]) >= 0.0000 && abs([eta]) < 0.1000) * ([energy] >= 0.0000 && [energy] < 1.0000) * (0.00315864) + \
+#(abs([eta]) >= 0.0000 && abs([eta]) < 0.1000) * ([energy] >= 1.0000 ) * (0.003159 + ([energy]-1.000000)* 0.000007)" # ...
 
 from Configurables import SimG4ParticleSmearFormula
 smeartool = SimG4ParticleSmearFormula()
