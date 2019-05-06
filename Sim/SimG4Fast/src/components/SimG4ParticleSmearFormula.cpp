@@ -49,7 +49,7 @@ StatusCode SimG4ParticleSmearFormula::smearMomentum(CLHEP::Hep3Vector& aMom, int
   m_resolutionMomentum.SetParameter("energy", aMom.mag());
   m_resolutionMomentum.SetParameter("eta", aMom.eta());
   m_randSvc->generator(Rndm::Gauss(1,
-                                   m_resolutionMomentum.EvalPar(nullptr, nullptr) /* Parameters set with SetParameter above */,
+                                   m_resolutionMomentum.EvalPar(nullptr, nullptr) /* Parameters set with SetParameter above */),
                                    m_gauss);
   double tmp = m_gauss->shoot();
   aMom *= tmp;
