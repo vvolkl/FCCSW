@@ -17,7 +17,11 @@ void ParticleHistoryAction::PreUserTrackingAction(const G4Track* aTrack) {
   if (selectSecondary(*aTrack, m_energyCut)) {
     evtinfo->addParticle(aTrack);
   }
-  const_cast<G4Track*>(aTrack)->SetTrackStatus(fStopAndKill);
+  std::cout << aTrack->GetParentID() << std::endl;
+  if (aTrack->GetParentID() != 0) {
+    const_cast<G4Track*>(aTrack)->SetTrackStatus(fStopAndKill);
+  }
+
 }
 
 void ParticleHistoryAction::PostUserTrackingAction(const G4Track* /*aTrack*/) {}
