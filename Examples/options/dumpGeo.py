@@ -16,11 +16,11 @@ geoservice.detectors=[
   'file:../Detector/DetSensitive/tests/compact/Box_simpleTrackerSD.xml',
   ]
 geoservice.OutputLevel = INFO
-app.ExtSvc += geoservice
+app.ExtSvc += [geoservice]
 
 from Configurables import SimG4Svc
 geantservice = SimG4Svc("SimG4Svc")
-app.ExtSvc += geantservice
+app.ExtSvc += [geantservice]
 
 export_fname = "TestBox.gdml"
 # check if file exists and delete it:
