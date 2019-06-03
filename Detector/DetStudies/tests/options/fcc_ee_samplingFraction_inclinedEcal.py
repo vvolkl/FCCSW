@@ -62,7 +62,7 @@ hist.AuditExecute = True
 from Configurables import ApplicationMgr
 ApplicationMgr( TopAlg = [geantsim, hist],
                 EvtSel = 'NONE',
-                EvtMax = 5,
+                EvtMax = 10,
                 # order is important, as GeoSvc is needed by G4SimSvc
                 ExtSvc = [podioevent, geoservice, geantservice, audsvc],
                 OutputLevel = DEBUG
