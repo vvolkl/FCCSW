@@ -28,6 +28,8 @@
 
   <include ref="./FCCee_DectDimensions.xml" />
 
+  <include ref="./Solenoid_o1_v01_02.xml" />
+
   <include ref="../../DetFCCeeIDEA/compact/Beampipe.xml"/>
   <include ref="../../DetFCCeeIDEA/compact/BeamInstrumentation.xml"/>
   <include ref="../../DetFCCeeIDEA/compact/LumiCal.xml"/>
