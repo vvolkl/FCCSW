@@ -6,9 +6,7 @@ podioevent = FCCDataSvc("EventDataSvc")
 
 # DD4hep geometry service
 from Configurables import GeoSvc
-geoservice = GeoSvc("GeoSvc", detectors=[ 
-      'file:Detector/DetFCCeeIDEA-LAr/compact/FCCee_DectEmptyMaster.xml',
-      'file:Detector/DetFCCeeECalInclined/compact/FCCee_ECalBarrel_calibration.xml',
+geoservice = GeoSvc("GeoSvc", detectors=[ 'file:Detector/DetFCCeeIDEA-LAr/compact/FCCee_DectMaster.xml',
             ],
                     OutputLevel = INFO)
 
@@ -27,7 +25,7 @@ saveecaltool.positionedCaloHits.Path = "ECalBarrelPositionedHits"
 saveecaltool.caloHits.Path = "ECalBarrelHits"
 from Configurables import SimG4SingleParticleGeneratorTool
 pgun=SimG4SingleParticleGeneratorTool("SimG4SingleParticleGeneratorTool",saveEdm=True,
-                                      particleName = "e-", energyMin = 50000, energyMax = 50000, etaMin = 0, etaMax = 0,
+                                      particleName = "gamma", energyMin = 100, energyMax = 5000, etaMin = 0, etaMax = 0,
                                       OutputLevel = DEBUG)
 # next, create the G4 algorithm, giving the list of names of tools ("XX/YY")
 geantsim = SimG4Alg("SimG4Alg",
@@ -35,22 +33,6 @@ geantsim = SimG4Alg("SimG4Alg",
                     eventProvider = pgun,
                     OutputLevel = DEBUG)
 
-from Configurables import SamplingFractionInLayers
-hist = SamplingFractionInLayers("hists",
-                                 energyAxis = 50,
-                                 readoutName = "ECalBarrelEta",
-                                 layerFieldName = "layer",
-                                 activeFieldName = "type",
-                                 activeFieldValue = 0,
-                                 numLayers = 8,
-                                 OutputLevel = INFO)
-hist.deposits.Path="ECalBarrelPositionedHits"
-
-THistSvc().Output = ["rec DATAFILE='histSF_fccee_inclined_e50GeV_eta0_1events.root' TYP='ROOT' OPT='RECREATE'"]
-THistSvc().PrintAll=True
-THistSvc().AutoSave=True
-THistSvc().AutoFlush=False
-THistSvc().OutputLevel=INFO
 
 #CPU information
 from Configurables import AuditorSvc, ChronoAuditor
@@ -58,19 +40,18 @@ chra = ChronoAuditor()
 audsvc = AuditorSvc()
 audsvc.Auditors = [chra]
 geantsim.AuditExecute = True
-hist.AuditExecute = True
 
 from Configurables import PodioOutput
 ### PODIO algorithm
 out = PodioOutput("out",OutputLevel=DEBUG)
 out.outputCommands = ["keep *"]
-out.filename = "fccee_samplingFraction_inclinedEcal.root"
+out.filename = "fccee_moreevents_gamma_inclinedEcal.root"
 
 # ApplicationMgr
 from Configurables import ApplicationMgr
-ApplicationMgr( TopAlg = [geantsim, hist, out],
+ApplicationMgr( TopAlg = [geantsim,  out],
                 EvtSel = 'NONE',
-                EvtMax = 10,
+                EvtMax = 1000,
                 # order is important, as GeoSvc is needed by G4SimSvc
                 ExtSvc = [podioevent, geoservice, geantservice, audsvc],
                 OutputLevel = DEBUG
