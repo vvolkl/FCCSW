@@ -1,11 +1,11 @@
 import os
 
-from GaudiKernel.SystemOfUnits import MeV,GeV, tesla
+from GaudiKernel.SystemOfUnits import MeV,GeV
 
 # simulations setup
-energy=20*GeV
-num_events=1000
-magnetic_field = False
+energy=50*GeV
+num_events=3
+magnetic_field=1
 particleType="e-"
 
 from Gaudi.Configuration import *
@@ -15,19 +15,15 @@ from Configurables import ApplicationMgr, FCCDataSvc, PodioOutput
 podioevent   = FCCDataSvc("EventDataSvc")
 
 from Configurables import GeoSvc
-geoservice = GeoSvc("GeoSvc", detectors=[  'file:Detector/DetFCCeeIDEA-LAr/compact/FCCee_DectEmptyMaster.xml',
-                                           'file:Detector/DetFCCeeECalInclined/compact/FCCee_ECalBarrel_withCryostat.xml',
+geoservice = GeoSvc("GeoSvc", detectors=[  'file:Detector/DetFCChhBaseline1/compact/FCChh_DectEmptyMaster.xml',
+                                           'file:Detector/DetTrackerSimple/compact/Tracker.xml',
+                                           'file:Detector/DetFCChhECalInclined/compact/FCChh_ECalBarrel_withCryostat.xml',
+                                           'file:Detector/DetFCChhHCalTile/compact/FCChh_HCalBarrel_TileCal.xml',
+                                           'file:Detector/DetFCChhHCalTile/compact/FCChh_HCalExtendedBarrel_TileCal.xml',
+                                           'file:Detector/DetFCChhCalDiscs/compact/Endcaps_coneCryo.xml',
+                                           'file:Detector/DetFCChhCalDiscs/compact/Forward_coneCryo.xml'
                                            ],
-                    OutputLevel = WARNING)
-#geoservice = GeoSvc("GeoSvc", detectors=[  'file:Detector/DetFCChhBaseline1/compact/FCChh_DectEmptyMaster.xml',
-#                                           'file:Detector/DetFCChhTrackerTkLayout/compact/Tracker.xml',
-#                                           'file:Detector/DetFCChhECalInclined/compact/FCChh_ECalBarrel_withCryostat.xml',
-#                                           'file:Detector/DetFCChhHCalTile/compact/FCChh_HCalBarrel_TileCal.xml',
-#                                           'file:Detector/DetFCChhHCalTile/compact/FCChh_HCalExtendedBarrel_TileCal.xml',
-#                                           'file:Detector/DetFCChhCalDiscs/compact/Endcaps_coneCryo.xml',
-#                                           'file:Detector/DetFCChhCalDiscs/compact/Forward_coneCryo.xml'
-#                                           ],
-#                    OutputLevel = INFO)
+                    OutputLevel = INFO)
 
 # Geant4 service
 # Configures the Geant simulation: geometry, physics list and user actions
@@ -40,7 +36,7 @@ geantservice.g4PreInitCommands += ["/run/setCut 0.1 mm"]
 # Magnetic field
 from Configurables import SimG4ConstantMagneticFieldTool
 if magnetic_field==1:
-    field = SimG4ConstantMagneticFieldTool("SimG4ConstantMagneticFieldTool", FieldComponentZ=-2*tesla, FieldOn=True,IntegratorStepper="ClassicalRK4")
+    field = SimG4ConstantMagneticFieldTool("SimG4ConstantMagneticFieldTool",FieldOn=True,IntegratorStepper="ClassicalRK4")
 else:
     field = SimG4ConstantMagneticFieldTool("SimG4ConstantMagneticFieldTool",FieldOn=False)
 
@@ -92,16 +88,14 @@ savehcalfwdtool.caloHits.Path = "HCalFwdHits"
 # next, create the G4 algorithm, giving the list of names of tools ("XX/YY")
 from Configurables import SimG4SingleParticleGeneratorTool
 pgun = SimG4SingleParticleGeneratorTool("SimG4SingleParticleGeneratorTool",saveEdm=True,
-                  particleName=particleType,energyMin=energy,energyMax=energy,etaMin=-1.0,etaMax=1.0,
+                particleName=particleType,energyMin=energy,energyMax=energy,etaMin=-2.0,etaMax=2.0,
                 OutputLevel = DEBUG)
 
 geantsim = SimG4Alg("SimG4Alg",
-                       outputs= ["SimG4SaveCalHits/saveECalBarrelHits", 
-                                # "SimG4SaveCalHits/saveECalEndcapHits",
-                                # "SimG4SaveCalHits/saveECalFwdHits", "SimG4SaveCalHits/saveHCalHits",
-                                # "SimG4SaveCalHits/saveExtHCalHits", "SimG4SaveCalHits/saveHCalEndcapHits",
-                                # "SimG4SaveCalHits/saveHCalFwdHits"
-                                 ],
+                       outputs= ["SimG4SaveCalHits/saveECalBarrelHits", "SimG4SaveCalHits/saveECalEndcapHits",
+                                 "SimG4SaveCalHits/saveECalFwdHits", "SimG4SaveCalHits/saveHCalHits",
+                                 "SimG4SaveCalHits/saveExtHCalHits", "SimG4SaveCalHits/saveHCalEndcapHits",
+                                 "SimG4SaveCalHits/saveHCalFwdHits"],
                        eventProvider=pgun,
                        OutputLevel=INFO)
 
@@ -266,8 +260,9 @@ createHcalFwdCells.cells.Path="HCalFwdCells"
 
 out = PodioOutput("out",
                   OutputLevel=INFO)
-out.outputCommands = ["drop *", "keep ECalBarrelCells", "keep ECalEndcapCells", "keep ECalFwdCells", "keep HCalBarrelCells", "keep HCalExtBarrelCells", "keep HCalEndcapCells", "keep HCalFwdCells", "keep GenParticles","keep GenVertices"]
-out.filename = "output_fullCalo_SimAndDigi_e"+str(energy)+"GeV_"+str(num_events)+"events.root"
+#out.outputCommands = ["drop *", "keep ECalBarrelCells", "keep ECalEndcapCells", "keep ECalFwdCells", "keep HCalBarrelCells", "keep HCalExtBarrelCells", "keep HCalEndcapCells", "keep HCalFwdCells", "keep GenParticles","keep GenVertices"]
+out.outputCommands = ["keep *"]
+out.filename = "output_fullCalo_SimAndDigi_e50GeV_"+str(num_events)+"events.root"
 
 #CPU information
 from Configurables import AuditorSvc, ChronoAuditor
@@ -293,16 +288,16 @@ ApplicationMgr(
               positionsEcalBarrel,
               resegmentEcalBarrel,
               createEcalBarrelCells,
-             # mergelayersEcalEndcap,
-             # createEcalEndcapCells,
-             # mergelayersEcalFwd,
-             # createEcalFwdCells,
-             # createHcalCells,
-             # createExtHcalCells,
-             # mergelayersHcalEndcap,
-             # createHcalEndcapCells,
-             # mergelayersHcalFwd,
-             # createHcalFwdCells,
+              mergelayersEcalEndcap,
+              createEcalEndcapCells,
+              mergelayersEcalFwd,
+              createEcalFwdCells,
+              createHcalCells,
+              createExtHcalCells,
+              mergelayersHcalEndcap,
+              createHcalEndcapCells,
+              mergelayersHcalFwd,
+              createHcalFwdCells,
               out
               ],
     EvtSel = 'NONE',

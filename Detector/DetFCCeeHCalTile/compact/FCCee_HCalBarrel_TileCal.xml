@@ -76,7 +76,7 @@
         <layer id="0" name="type_1" material="Air" vis="hcal_barrel_layer_vis">
           <dimensions
              dr="50*mm"
-             nModules="2"
+             nModules="4"
              />
         </layer>
         <layer id="1" name="type_2" material="Air" vis="hcal_barrel_layer_vis">
@@ -87,8 +87,8 @@
         </layer>
         <layer id="2" name="type_3" material="Air" vis="hcal_barrel_layer_vis">
           <dimensions
-             dr="150*mm"
-             nModules="4"
+             dr="200*mm"
+             nModules="2"
              />
         </layer>
       </layers>

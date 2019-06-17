@@ -91,6 +91,25 @@
     <constant name="BarECal_rmin" value="2150*mm"/>
     <constant name="BarECal_rmax" value="2750*mm"/>
     <constant name="BarECal_dz" value="2210*mm"/>
+
+    <!-- Calorimeter endcaps (EMEC + HEC)-->
+    <constant name="ExtBarECal_id" value="6"/>
+    <constant name="HadronicEndCap_id" value="7"/>
+    <constant name="ExtBarCal_dz" value="1500*mm"/>
+    <constant name="ExtBarCal_zOffset" value="5300*mm + ExtBarCal_dz"/>
+    <constant name="ExtBarCal_rmin1" value="(ExtBarCal_zOffset - ExtBarCal_dz)* tan (2*atan(exp(-2.5))) - 0.1*m"/>
+    <constant name="ExtBarCal_rmin2" value="(ExtBarCal_zOffset + ExtBarCal_dz)* tan (2*atan(exp(-2.5))) - 0.1*m"/>
+    <constant name="ExtBarCal_rmax" value="2700*mm"/>
+    <!-- HCal extended barrel (HCAL EB) -->
+    <constant name="ExtBarHCal_id" value="9"/>
+    <constant name="ExtBarHCal1_rmin" value="3500*mm"/>
+    <constant name="ExtBarHCal1_rmax" value="4590*mm"/>
+    <constant name="ExtBarHCal2_rmin" value="2850*mm"/>
+    <constant name="ExtBarHCal2_rmax" value="4590*mm"/>
+    <constant name="ExtBarHCal1_dz" value="150*mm"/>
+    <constant name="ExtBarHCal1_zOffset" value="5000*mm + ExtBarHCal1_dz"/>
+    <constant name="ExtBarHCal2_dz" value="1600*mm"/>
+    <constant name="ExtBarHCal2_zOffset" value="ExtBarHCal1_zOffset + ExtBarHCal1_dz + ExtBarHCal2_dz"/>
     
     <constant name="HCalBarrel_inner_radius" value="2400*mm"/>
     <constant name="HCalBarrel_outer_radius" value="3566*mm"/>
