@@ -45,7 +45,7 @@ hist = SamplingFractionInLayers("hists",
                                  OutputLevel = INFO)
 hist.deposits.Path="ECalBarrelPositionedHits"
 
-THistSvc().Output = ["rec DATAFILE='histSF_inclined_e50GeV_eta0_1events.root' TYP='ROOT' OPT='RECREATE'"]
+THistSvc().Output = ["rec DATAFILE='histSF_fcchh_inclined_e50GeV_eta0.root' TYP='ROOT' OPT='RECREATE'"]
 THistSvc().PrintAll=True
 THistSvc().AutoSave=True
 THistSvc().AutoFlush=False
@@ -59,9 +59,15 @@ audsvc.Auditors = [chra]
 geantsim.AuditExecute = True
 hist.AuditExecute = True
 
+from Configurables import PodioOutput
+### PODIO algorithm
+out = PodioOutput("out",OutputLevel=DEBUG)
+out.outputCommands = ["keep *"]
+out.filename = "fcchh_samplingFraction_inclinedEcal.root"
+
 # ApplicationMgr
 from Configurables import ApplicationMgr
-ApplicationMgr( TopAlg = [geantsim, hist],
+ApplicationMgr( TopAlg = [geantsim, hist, out],
                 EvtSel = 'NONE',
                 EvtMax = 10,
                 # order is important, as GeoSvc is needed by G4SimSvc

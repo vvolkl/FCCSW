@@ -55,7 +55,7 @@ hist = UpstreamMaterial("histsPresampler",
 hist.deposits.Path="ECalBarrelCells"
 hist.particle.Path="GenParticles"
 
-THistSvc().Output = ["det DATAFILE='histUpstream_hits_e50GeV_eta0_Bfield1_10events_8layers.root' TYP='ROOT' OPT='RECREATE'"]
+THistSvc().Output = ["det DATAFILE='histUpstream_fcchh_hits_e50GeV_eta0_Bfield1_10events_8layers.root' TYP='ROOT' OPT='RECREATE'"]
 THistSvc().PrintAll=True
 THistSvc().AutoSave=True
 THistSvc().AutoFlush=True
@@ -69,9 +69,16 @@ audsvc.Auditors = [chra]
 geantsim.AuditExecute = True
 hist.AuditExecute = True
 
+from Configurables import PodioOutput
+### PODIO algorithm
+out = PodioOutput("out",OutputLevel=DEBUG)
+out.outputCommands = ["keep *"]
+out.filename = "fcchh_upstreamMaterial_inclinedEcal.root"
+
+
 # ApplicationMgr
 from Configurables import ApplicationMgr
-ApplicationMgr( TopAlg = [geantsim, createcellsBarrel, hist],
+ApplicationMgr( TopAlg = [geantsim, createcellsBarrel, hist, out, ],
                 EvtSel = 'NONE',
                 EvtMax = 10,
                 # order is important, as GeoSvc is needed by G4SimSvc
