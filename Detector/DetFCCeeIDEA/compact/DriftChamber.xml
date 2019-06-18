@@ -30,7 +30,7 @@
   <display>
 
     <vis name="GasVis" alpha="1.0" r="0.0" g="0.8" b="0.7" showDaughters="true" visible="true"/>
-    <vis name="envelopeVis" alpha="0.1" r="0.0" g="0.1" b="0.6" showDaughters="true" visible="false"/>
+    <vis name="envelopeVis" alpha="0.1" r="0.0" g="0.1" b="0.6" showDaughters="false" visible="true"/>
   </display>
 
 

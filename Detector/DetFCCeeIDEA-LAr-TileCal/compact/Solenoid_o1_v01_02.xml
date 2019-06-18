@@ -11,7 +11,6 @@
         <vis name="SolenoidBarrelLayerVis" alpha="1" r="0"    g="0.3"  b="0.3" showDaughters="false" visible="true"/>
         <vis name="SolenoidCoilEndsVis"    alpha="1" r="0"    g="0.9"  b="0.9" showDaughters="false" visible="true"/>
         <vis name="SolenoidVacuum"         alpha="0" r="1"    g="1"    b="1"   showDaughters="false" visible="true"/>        
-        <vis name="SOLVis2" r="0.20703125" g="0.453125" b="0.77734375" />
     </display>
     
     
@@ -31,7 +30,7 @@
         
         <detector name="SolenoidBarrel" type="DD4hep_Solenoid_o1_v01" id="0" reflect="true">
             <type_flags type=" DetType_COIL"/>
-            <envelope vis="SOLVis2">
+            <envelope vis="SOLVis">
                 <shape type="Assembly"/>
             </envelope>
             

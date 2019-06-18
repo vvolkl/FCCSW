@@ -17,7 +17,7 @@ app.ExtSvc += [podioevent]
 from Configurables import GeoSvc
 geoservice = GeoSvc("GeoSvc")
 geoservice.detectors = [
-                         'Detector/DetFCCeeIDEA/compact/FCCee_DectMaster.xml',
+                         'Detector/DetFCCeeIDEA-LAr/compact/FCCee_DectMaster.xml',
                        ] 
 geoservice.OutputLevel = INFO
 app.ExtSvc +=[geoservice]
@@ -40,7 +40,6 @@ physicslisttool.fullphysics = "SimG4FtfpBert"
 
 from Configurables import SimG4FullSimActions
 actions = SimG4FullSimActions()
-actions.enableHistory=True
 
 from Configurables import SimG4Svc
 geantservice = SimG4Svc("SimG4Svc")
@@ -58,10 +57,6 @@ savetrajectorytool = SimG4SaveTrajectory("saveTrajectory")
 savetrajectorytool.trajectory.Path = "trajectory"
 savetrajectorytool.trajectoryPoints.Path = "trajectoryPoints"
 
-from Configurables import SimG4SaveParticleHistory
-savehisttool = SimG4SaveParticleHistory("saveHistory")
-savehisttool.mcParticles.Path = "simParticles"
-savehisttool.genVertices.Path = "simVertices"
 
 from Configurables import SimG4SaveTrackerHits
 savetrackertool = SimG4SaveTrackerHits("saveTrackerHits_Barrel")
@@ -84,24 +79,65 @@ savetrackertool_DCH.positionedTrackHits.Path = "positionedHits_DCH"
 savetrackertool_DCH.trackHits.Path = "hits_DCH"
 savetrackertool_DCH.digiTrackHits.Path = "digiHits_DCH"
 
+# ECAL readouts
+ecalBarrelReadoutName = "ECalBarrelEta"
+ecalBarrelReadoutNamePhiEta = "ECalBarrelPhiEta"
+ecalEndcapReadoutName = "EMECPhiEta"
+ecalFwdReadoutName = "EMFwdPhiEta"
+# HCAL readouts
+hcalReadoutName = "HCalBarrelReadout"
+extHcalReadoutName = "HCalExtBarrelReadout"
+hcalEndcapReadoutName = "HECPhiEta"
+hcalFwdReadoutName = "HFwdPhiEta"
+# layers to be merged in endcaps & forward calo
+ecalEndcapNumberOfLayersToMerge = [26]*5+[27]
+ecalFwdNumberOfLayersToMerge = [7]*5+[8]
+hcalEndcapNumberOfLayersToMerge = [13]+[14]*5
+hcalFwdNumberOfLayersToMerge = [8]+[9]*5
+identifierName = "layer"
+volumeName = "layer"
+
+from Configurables import SimG4Alg, SimG4SaveCalHits
+saveecalbarreltool = SimG4SaveCalHits("saveECalBarrelHits", readoutNames = [ecalBarrelReadoutName])
+saveecalbarreltool.positionedCaloHits.Path = "ECalBarrelPositionedHits"
+saveecalbarreltool.caloHits.Path = "ECalBarrelHits"
+saveecalendcaptool = SimG4SaveCalHits("saveECalEndcapHits", readoutNames = [ecalEndcapReadoutName])
+saveecalendcaptool.positionedCaloHits.Path = "ECalEndcapPositionedHits"
+saveecalendcaptool.caloHits.Path = "ECalEndcapHits"
+saveecalfwdtool = SimG4SaveCalHits("saveECalFwdHits", readoutNames = [ecalFwdReadoutName])
+saveecalfwdtool.positionedCaloHits.Path = "ECalFwdPositionedHits"
+saveecalfwdtool.caloHits.Path = "ECalFwdHits"
+savehcaltool = SimG4SaveCalHits("saveHCalHits",readoutNames = [hcalReadoutName])
+savehcaltool.positionedCaloHits.Path = "HCalPositionedHits"
+savehcaltool.caloHits.Path = "HCalHits"
+saveexthcaltool = SimG4SaveCalHits("saveExtHCalHits",readoutNames = [extHcalReadoutName])
+saveexthcaltool.positionedCaloHits.Path = "ExtHCalPositionedHits"
+saveexthcaltool.caloHits.Path = "ExtHCalHits"
+savehcalendcaptool = SimG4SaveCalHits("saveHCalEndcapHits", readoutNames = [hcalEndcapReadoutName])
+savehcalendcaptool.positionedCaloHits.Path = "HCalEndcapPositionedHits"
+savehcalendcaptool.caloHits.Path = "HCalEndcapHits"
+savehcalfwdtool = SimG4SaveCalHits("saveHCalFwdHits", readoutNames = [hcalFwdReadoutName])
+savehcalfwdtool.positionedCaloHits.Path = "HCalFwdPositionedHits"
+savehcalfwdtool.caloHits.Path = "HCalFwdHits"
+
 set_energy = 2400 
 from Configurables import SimG4SingleParticleGeneratorTool
 pgun = SimG4SingleParticleGeneratorTool("GeantinoGun")
 pgun.etaMin=0
 pgun.etaMax=0
 pgun.phiMin=0
-pgun.phiMax=360
+pgun.phiMax=0
 pgun.energyMin=set_energy
 pgun.energyMax=set_energy
-pgun.particleName="mu-"
+pgun.particleName="e-"
 
 from Configurables import SimG4Alg
 geantsim = SimG4Alg("SimG4Alg")
 geantsim.outputs= [
-        "SimG4SaveParticleHistory/saveHistory",
         "SimG4SaveTrackerHits/saveTrackerHits_Barrel", 
         "SimG4SaveTrackerHits/saveTrackerHits_Endcap",
         "SimG4SaveTrackerHits/saveTrackerHits_DCH",
+        "SimG4SaveCalHits/saveECalBarrelHits",
         ]
 geantsim.eventProvider = pgun
 app.TopAlg += [geantsim]

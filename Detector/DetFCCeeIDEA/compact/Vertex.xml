@@ -15,7 +15,7 @@
 
     <comment>Tracking detectors</comment>
     <detectors>
-        <detector name="Vertex" type="DD4hep_SubdetectorAssembly" vis="VXDVis">
+        <detector name="Vertex" type="DD4hep_SubdetectorAssembly" vis="VXDVis2">
 		<shape type="BooleanShape" operation="Subtraction" material="Air">
 		    <shape type="BooleanShape" operation="Subtraction">
 			<shape type="Tube" rmin="Vertex_inner_radius" rmax="Vertex_outer_radius" dz="Vertex_half_length"/>
@@ -35,6 +35,7 @@
     <display>
         <vis name="SiVertexModuleVis"    alpha="1.0" r="1" g="1"    b="0.6"     showDaughters="true"  visible="false"/>
         <vis name="SiVertexSensitiveVis" alpha="1.0" r="1" g="0.2"  b="0.2"     showDaughters="true"  visible="true"/>
+        <vis name="VXDVis2" alpha="1.0" r="1" g="0.2"  b="0.2"     showDaughters="false"  visible="true"/>
         <vis name="SiVertexPassiveVis"   alpha="1.0" r="0.274" g="0.274"  b="0.274"       showDaughters="true"  visible="true"/>
         <vis name="SiVertexCableVis"     alpha="1.0" r="0.85" g="0.53"    b="0.4"       showDaughters="true"  visible="true"/>
         <vis name="SiVertexAir"          alpha="1.0" r="0" g="0"    b="0"       showDaughters="false"  visible="false"/>

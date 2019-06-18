@@ -70,7 +70,7 @@ out.filename = "fccee_samplingFraction_inclinedEcal.root"
 from Configurables import ApplicationMgr
 ApplicationMgr( TopAlg = [geantsim, hist, out],
                 EvtSel = 'NONE',
-                EvtMax = 10,
+                EvtMax = 50,
                 # order is important, as GeoSvc is needed by G4SimSvc
                 ExtSvc = [podioevent, geoservice, geantservice, audsvc],
                 OutputLevel = DEBUG

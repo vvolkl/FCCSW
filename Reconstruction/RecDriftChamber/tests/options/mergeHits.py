@@ -50,7 +50,7 @@ outfilename = "SimuOutput/pythia/reco_simu_Zdd.root"
 from GaudiKernel.SystemOfUnits import eV
 from Configurables import ApplicationMgr, FCCDataSvc, PodioOutput
 
-podioevent   = FCCDataSvc("EventDataSvc", input=my_input)
+podioevent   = FCCDataSvc("EventDataSvc", input="fccee_idea_pgun.root")
 
 
 
@@ -69,7 +69,7 @@ geoservice = GeoSvc("GeoSvc", detectors=['Detector/DetFCCeeIDEA/compact/FCCee_De
 from Configurables import CreateDCHHits
 createhits = CreateDCHHits("CreateDCHHits",
                            readoutName = "DriftChamberCollection",
-                           outFileName=outfilename,
+                           outFileName="mergedhits.root",
                            EdepCut = 100*1e-9,
                            DCACut = 0.8,
                            OutputLevel=DEBUG)
@@ -77,6 +77,11 @@ createhits = CreateDCHHits("CreateDCHHits",
 createhits.positionedHits.Path = "positionedHits_DCH"
 createhits.mergedHits.Path = "merged_DCH"
 
+
+from Configurables import PodioOutput
+out = PodioOutput("out")
+out.filename = "fccee_idea_pgun_merged.root"
+out.outputCommands = ["keep *"]
 
 ApplicationMgr( TopAlg = [podioinput, 
                           createhits, 

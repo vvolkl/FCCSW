@@ -18,14 +18,14 @@ hcalExtBarrelReadoutPhiEtaName = "ExtBarHCal_Readout_phieta"
 hcalEndcapReadoutName = "HECPhiEtaReco"
 hcalFwdReadoutName = "HFwdPhiEta"
 # Number of events
-num_events = 1000
+num_events = 10000
 
 from Gaudi.Configuration import *
 from Configurables import ApplicationMgr, FCCDataSvc, PodioOutput
 
 podioevent = FCCDataSvc("EventDataSvc") #, input="output_fullCalo_SimAndDigi_e50GeV_"+str(num_events)+"events.root")
 #podioevent.input="/opt/fcc/repo/FCCeeLArStudy/ShowerDisplay/fccee_samplingFraction_inclinedEcal.root"
-podioevent.input="output_fullCalo_SimAndDigi_e20000.0GeV_1000events.root"
+podioevent.input="output_fullCalo_SimAndDigi_e100000.0GeV_10000events.root"
 # reads HepMC text file and write the HepMC::GenEvent to the data service
 from Configurables import PodioInput
 podioinput = PodioInput("PodioReader",

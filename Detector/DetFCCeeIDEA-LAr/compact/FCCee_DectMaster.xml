@@ -28,14 +28,20 @@
 
   <include ref="./FCCee_DectDimensions.xml" />
 
-  <include ref="./Solenoid_o1_v01_02.xml" />
+  <!--
+  -->
 
+  <!--
   <include ref="../../DetFCCeeIDEA/compact/Beampipe.xml"/>
   <include ref="../../DetFCCeeIDEA/compact/BeamInstrumentation.xml"/>
   <include ref="../../DetFCCeeIDEA/compact/LumiCal.xml"/>
   <include ref="../../DetFCCeeIDEA/compact/HOMAbsorber.xml"/>
   <include ref="../../DetFCCeeIDEA/compact/Vertex.xml"/>
   <include ref="../../DetFCCeeIDEA/compact/DriftChamber.xml"/>
+  <include ref="../../DetFCCeeHCalTile/compact/FCCee_HCalBarrel_TileCal.xml" />
+  <include ref="./Solenoid_o1_v01_02.xml" />
+  -->
   <include ref="../../DetFCCeeECalInclined/compact/FCCee_ECalBarrel_withCryostat.xml" />
+
 
 </lccdd>
