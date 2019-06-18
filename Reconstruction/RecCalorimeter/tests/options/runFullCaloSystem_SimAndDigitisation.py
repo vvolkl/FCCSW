@@ -3,8 +3,8 @@ import os
 from GaudiKernel.SystemOfUnits import MeV,GeV, tesla
 
 # simulations setup
-energy=20*GeV
-num_events=1000
+energy=100*GeV
+num_events=10000
 magnetic_field = False
 particleType="e-"
 
