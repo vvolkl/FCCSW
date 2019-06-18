@@ -26,7 +26,7 @@ from Configurables import SimG4ConstantMagneticFieldTool
 field = SimG4ConstantMagneticFieldTool()
 field.FieldOn = True
 field.IntegratorStepper = "ClassicalRK4"
-field.FieldComponentZ = 2*units.tesla
+field.FieldComponentZ = 0*units.tesla
 field.MaximumStep = 10000.0
 
 from Configurables import SimG4UserLimitRegion
@@ -120,7 +120,7 @@ savehcalfwdtool = SimG4SaveCalHits("saveHCalFwdHits", readoutNames = [hcalFwdRea
 savehcalfwdtool.positionedCaloHits.Path = "HCalFwdPositionedHits"
 savehcalfwdtool.caloHits.Path = "HCalFwdHits"
 
-set_energy = 2400 
+set_energy = 10000 
 from Configurables import SimG4SingleParticleGeneratorTool
 pgun = SimG4SingleParticleGeneratorTool("GeantinoGun")
 pgun.etaMin=0

@@ -25,7 +25,7 @@ from Configurables import ApplicationMgr, FCCDataSvc, PodioOutput
 
 podioevent = FCCDataSvc("EventDataSvc") #, input="output_fullCalo_SimAndDigi_e50GeV_"+str(num_events)+"events.root")
 #podioevent.input="/opt/fcc/repo/FCCeeLArStudy/ShowerDisplay/fccee_samplingFraction_inclinedEcal.root"
-podioevent.input="output_fullCalo_SimAndDigi_e100000.0GeV_10000events.root"
+podioevent.input="fccee_idea_pgun.root"
 # reads HepMC text file and write the HepMC::GenEvent to the data service
 from Configurables import PodioInput
 podioinput = PodioInput("PodioReader",
