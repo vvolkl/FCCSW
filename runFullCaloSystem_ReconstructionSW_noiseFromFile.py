@@ -22,16 +22,22 @@ num_events = 10000
 
 from Gaudi.Configuration import *
 from Configurables import ApplicationMgr, FCCDataSvc, PodioOutput
+import sys
 
 podioevent = FCCDataSvc("EventDataSvc") #, input="output_fullCalo_SimAndDigi_e50GeV_"+str(num_events)+"events.root")
 #podioevent.input="/opt/fcc/repo/FCCeeLArStudy/ShowerDisplay/fccee_samplingFraction_inclinedEcal.root"
-podioevent.input="fccee_idea_pgun.root"
+#print sys.argv[2]
+#podioevent.input=sys.argv[2]
+import glob
+#podioevent.inputs=glob.glob("output_fullCalo_SimAndDigi_*.root")
+podioevent.input = "output_fullCalo_SimAndDigi_e10GeV_1000events_e3ef1d198a37450dbf11abaec912f1e2.root"
 # reads HepMC text file and write the HepMC::GenEvent to the data service
 from Configurables import PodioInput
 podioinput = PodioInput("PodioReader",
                         collections = [ecalBarrelCellsName,
                                        # ecalEndcapCellsName, ecalFwdCellsName,
                                        #hcalBarrelCellsName, hcalExtBarrelCellsName, hcalEndcapCellsName, hcalFwdCellsName,
+                                       "GenParticles",
                                        ])
 
 from Configurables import GeoSvc
@@ -45,7 +51,7 @@ geoservice = GeoSvc("GeoSvc", detectors=[  'file:Detector/DetFCCeeIDEA-LAr/compa
                     OutputLevel = WARNING)
 
 
-ecalBarrelNoisePath = "elecNoise_ecalBarrel_50Ohm_traces2_2shieldWidth.root"
+ecalBarrelNoisePath = "elecNoise_ecalBarrelFCCee_50Ohm_traces1_4shieldWidth.root"
 ecalEndcapNoisePath = "elecNoise_emec_50Ohm_2shieldWidth_6layers.root"
 ecalBarrelNoiseHistName = "h_elecNoise_fcc_"
 ecalEndcapNoiseHistName = "h_elecNoise_fcc_"
@@ -128,7 +134,7 @@ barrelGeometry = TubeLayerPhiEtaCaloTool("EcalBarrelGeo",
 createEcalBarrelCells = CreateCaloCells("CreateECalBarrelCells",
                                         geometryTool = barrelGeometry,
                                         doCellCalibration=False, # already calibrated
-                                        addCellNoise=False, filterCellNoise=False,
+                                        addCellNoise=True, filterCellNoise=False,
                                         noiseTool = noiseBarrel,
                                         hits=ecalBarrelCellsName,
                                         cells=ecalBarrelCellsName+"Noise",
@@ -190,7 +196,7 @@ dupE = 7
 dupP = 13
 finE = 9
 finP = 17
-threshold = 1
+threshold = 2
 
 createClusters = CreateCaloClustersSlidingWindow("CreateClusters",
                                                  towerTool = towers,
@@ -201,7 +207,7 @@ createClusters = CreateCaloClustersSlidingWindow("CreateClusters",
                                                  energyThreshold = threshold)
 createClusters.clusters.Path = "CaloClusters"
 
-out = PodioOutput("out", filename="output_allCalo_reco_noise_new.root")
+out = PodioOutput("out", filename="output_allCalo_reco_noise_new3.root")
 out.outputCommands = ["keep *"]
 
 #CPU information
