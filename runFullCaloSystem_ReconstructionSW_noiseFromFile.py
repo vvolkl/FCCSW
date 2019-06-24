@@ -18,7 +18,7 @@ hcalExtBarrelReadoutPhiEtaName = "ExtBarHCal_Readout_phieta"
 hcalEndcapReadoutName = "HECPhiEtaReco"
 hcalFwdReadoutName = "HFwdPhiEta"
 # Number of events
-num_events = 10000
+num_events = -1
 
 from Gaudi.Configuration import *
 from Configurables import ApplicationMgr, FCCDataSvc, PodioOutput
@@ -30,7 +30,7 @@ podioevent = FCCDataSvc("EventDataSvc") #, input="output_fullCalo_SimAndDigi_e50
 #podioevent.input=sys.argv[2]
 import glob
 #podioevent.inputs=glob.glob("output_fullCalo_SimAndDigi_*.root")
-podioevent.input = "output_fullCalo_SimAndDigi_e10GeV_1000events_e3ef1d198a37450dbf11abaec912f1e2.root"
+podioevent.input = "output_fullCalo_SimAndDigi_e500MeV5388a2996103450ab73e60dc86d79444.root"
 # reads HepMC text file and write the HepMC::GenEvent to the data service
 from Configurables import PodioInput
 podioinput = PodioInput("PodioReader",
@@ -138,7 +138,7 @@ createEcalBarrelCells = CreateCaloCells("CreateECalBarrelCells",
                                         noiseTool = noiseBarrel,
                                         hits=ecalBarrelCellsName,
                                         cells=ecalBarrelCellsName+"Noise",
-                                        OutputLevel=DEBUG)
+                                        OutputLevel=INFO)
 
 # add noise, create all existing cells in detector
 # currently only positive side!
@@ -178,7 +178,7 @@ towers = TowerToolBarrel("towers",
                                hcalExtBarrelReadoutName = hcalExtBarrelReadoutPhiEtaName,
                                hcalEndcapReadoutName = hcalEndcapReadoutName,
                                hcalFwdReadoutName = hcalFwdReadoutName,
-                               OutputLevel = DEBUG)
+                               OutputLevel = INFO)
 towers.ecalBarrelCells.Path = ecalBarrelCellsName + "Noise"
 towers.ecalEndcapCells.Path = ecalEndcapCellsName + "Noise"
 towers.ecalFwdCells.Path = ecalFwdCellsName
@@ -207,7 +207,8 @@ createClusters = CreateCaloClustersSlidingWindow("CreateClusters",
                                                  energyThreshold = threshold)
 createClusters.clusters.Path = "CaloClusters"
 
-out = PodioOutput("out", filename="output_allCalo_reco_noise_new3.root")
+import uuid
+out = PodioOutput("out", filename="output_allCalo_reco_noise_new3" + uuid.uuid4().hex + ".root")
 out.outputCommands = ["keep *"]
 
 #CPU information
