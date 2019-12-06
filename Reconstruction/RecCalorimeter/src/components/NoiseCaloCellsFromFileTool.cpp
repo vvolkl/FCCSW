@@ -12,17 +12,17 @@
 #include "TH1F.h"
 #include "TMath.h"
 
-DECLARE_TOOL_FACTORY(NoiseCaloCellsFromFileTool)
+DECLARE_COMPONENT(NoiseCaloCellsFromFileTool)
 
 NoiseCaloCellsFromFileTool::NoiseCaloCellsFromFileTool(const std::string& type, const std::string& name,
                                                        const IInterface* parent)
-    : GaudiTool(type, name, parent) {
+    : GaudiTool(type, name, parent), m_geoSvc("GeoSvc", name) {
   declareInterface<INoiseCaloCellsTool>(this);
+  declareProperty("cellPositionsTool", m_cellPositionsTool, "Handle for tool to retrieve cell positions");
 }
 
 StatusCode NoiseCaloCellsFromFileTool::initialize() {
-  // Get GeoSvc
-  m_geoSvc = service("GeoSvc");
+  
   if (!m_geoSvc) {
     error() << "Unable to locate Geometry Service. "
             << "Make sure you have GeoSvc and SimSvc in the right order in the configuration." << endmsg;
@@ -41,12 +41,39 @@ StatusCode NoiseCaloCellsFromFileTool::initialize() {
     error() << "Couldn't open file with noise constants!!!" << endmsg;
     return StatusCode::FAILURE;
   }
+  // Check if cell position tool available
+  if (!m_cellPositionsTool.retrieve() and !m_useSeg) {
+    info() << "Unable to retrieve cell positions tool, try eta-phi segmentation." << endmsg;
+    // Get PhiEta segmentation
+    m_segmentationPhiEta = dynamic_cast<dd4hep::DDSegmentation::FCCSWGridPhiEta*>(
+									    m_geoSvc->lcdd()->readout(m_readoutName).segmentation().segmentation());
+    if (m_segmentationPhiEta == nullptr) {
+      error() << "There is no phi-eta segmentation." << endmsg;
+      return StatusCode::FAILURE;
+    }
+    else
+      info() << "Found phi-eta segmentation." << endmsg;
+  }    
   // Get PhiEta segmentation
-  m_segmentation = dynamic_cast<dd4hep::DDSegmentation::FCCSWGridPhiEta*>(
+  m_segmentationPhiEta = dynamic_cast<dd4hep::DDSegmentation::FCCSWGridPhiEta*>(
+    m_geoSvc->lcdd()->readout(m_readoutName).segmentation().segmentation());
+  if (m_segmentationPhiEta == nullptr) {
+    m_segmentationMulti = dynamic_cast<dd4hep::DDSegmentation::MultiSegmentation*>(
       m_geoSvc->lcdd()->readout(m_readoutName).segmentation().segmentation());
-  if (m_segmentation == nullptr) {
-    error() << "There is no phi-eta segmentation." << endmsg;
-    return StatusCode::FAILURE;
+    if (m_segmentationMulti == nullptr) {
+      error() << "There is no phi-eta or multi- segmentation for the readout " << m_readoutName << " defined." << endmsg;
+      return StatusCode::FAILURE;
+    } else {
+      // check if multisegmentation contains only phi-eta sub-segmentations
+      const dd4hep::DDSegmentation::FCCSWGridPhiEta* subsegmentation = nullptr;
+      for (const auto& subSegm: m_segmentationMulti->subSegmentations()) {
+        subsegmentation = dynamic_cast<dd4hep::DDSegmentation::FCCSWGridPhiEta*>(subSegm.segmentation);
+        if (subsegmentation == nullptr) {
+          error() << "At least one of the sub-segmentations in MultiSegmentation named " << m_readoutName << " is not a phi-eta grid." << endmsg;
+          return StatusCode::FAILURE;
+        }
+      }
+    }
   }
 
   debug() << "Filter noise threshold: " << m_filterThreshold << "*sigma" << endmsg;
@@ -84,8 +111,8 @@ StatusCode NoiseCaloCellsFromFileTool::initNoiseFromFile() {
     error() << "Name of the file with noise values not set" << endmsg;
     return StatusCode::FAILURE;
   }
-  TFile file(m_noiseFileName.value().c_str(), "READ");
-  if (file.IsZombie()) {
+  std::unique_ptr<TFile> noiseFile(TFile::Open(m_noiseFileName.value().c_str(), "READ"));
+  if (noiseFile->IsZombie()) {
     error() << "Couldn't open the file with noise constants" << endmsg;
     return StatusCode::FAILURE;
   } else {
@@ -97,7 +124,7 @@ StatusCode NoiseCaloCellsFromFileTool::initNoiseFromFile() {
   for (unsigned i = 0; i < m_numRadialLayers; i++) {
     elecNoiseLayerHistoName = m_elecNoiseHistoName + std::to_string(i + 1);
     debug() << "Getting histogram with a name " << elecNoiseLayerHistoName << endmsg;
-    m_histoElecNoiseConst.push_back(*dynamic_cast<TH1F*>(file.Get(elecNoiseLayerHistoName.c_str())));
+    m_histoElecNoiseConst.push_back(*dynamic_cast<TH1F*>(noiseFile->Get(elecNoiseLayerHistoName.c_str())));
     if (m_histoElecNoiseConst.at(i).GetNbinsX() < 1) {
       error() << "Histogram  " << elecNoiseLayerHistoName
               << " has 0 bins! check the file with noise and the name of the histogram!" << endmsg;
@@ -106,7 +133,7 @@ StatusCode NoiseCaloCellsFromFileTool::initNoiseFromFile() {
     if (m_addPileup) {
       pileupLayerHistoName = m_pileupHistoName + std::to_string(i + 1);
       debug() << "Getting histogram with a name " << pileupLayerHistoName << endmsg;
-      m_histoPileupConst.push_back(*dynamic_cast<TH1F*>(file.Get(pileupLayerHistoName.c_str())));
+      m_histoPileupConst.push_back(*dynamic_cast<TH1F*>(noiseFile->Get(pileupLayerHistoName.c_str())));
       if (m_histoPileupConst.at(i).GetNbinsX() < 1) {
         error() << "Histogram  " << pileupLayerHistoName
                 << " has 0 bins! check the file with noise and the name of the histogram!" << endmsg;
@@ -114,6 +141,8 @@ StatusCode NoiseCaloCellsFromFileTool::initNoiseFromFile() {
       }
     }
   }
+
+  noiseFile->Close();
 
   // Check if we have same number of histograms (all layers) for pileup and electronics noise
   if (m_histoElecNoiseConst.size() == 0) {
@@ -131,16 +160,23 @@ StatusCode NoiseCaloCellsFromFileTool::initNoiseFromFile() {
 }
 
 double NoiseCaloCellsFromFileTool::getNoiseConstantPerCell(int64_t aCellId) {
+  const dd4hep::DDSegmentation::FCCSWGridPhiEta* segmentation = m_segmentationPhiEta;
+  if (segmentation == nullptr) {
+    segmentation = dynamic_cast<const dd4hep::DDSegmentation::FCCSWGridPhiEta*>(&m_segmentationMulti->subsegmentation(aCellId));
+  }
 
   double elecNoise = 0.;
   double pileupNoise = 0.;
 
-  // Get cell coordinates: eta and radial layer
-  double cellEta = m_segmentation->eta(aCellId);
   // Take readout, bitfield from GeoSvc
   auto decoder = m_geoSvc->lcdd()->readout(m_readoutName).idSpec().decoder();
-  //decoder->setValue(aCellId);
   dd4hep::DDSegmentation::CellID cID = aCellId;
+ 
+  double cellEta;
+  if (m_useSeg)
+    cellEta = m_segmentationPhiEta->eta(aCellId);
+  else
+    cellEta = m_cellPositionsTool->xyzPosition(cID).Eta();
   unsigned cellLayer = decoder->get(cID, m_activeFieldName);
 
   // All histograms have same binning, all bins with same size
