@@ -2,6 +2,8 @@
 
 // FCCSW
 #include "DetInterface/IGeoSvc.h"
+#include "DetCommon/Geant4CaloHit.h"
+#include "DetCommon/Geant4PreDigiTrackHit.h"
 
 // Geant
 #include "G4Event.hh"
@@ -9,11 +11,11 @@
 // DD4hep
 #include "DDG4/Geant4Hits.h"
 
-DECLARE_TOOL_FACTORY(InspectHitsCollectionsTool)
+DECLARE_COMPONENT(InspectHitsCollectionsTool)
 
 InspectHitsCollectionsTool::InspectHitsCollectionsTool(const std::string& aType, const std::string& aName,
                                                        const IInterface* aParent)
-    : GaudiTool(aType, aName, aParent) {
+    : GaudiTool(aType, aName, aParent), m_geoSvc("GeoSvc", aName) {
   declareInterface<ISimG4SaveOutputTool>(this);
 }
 
@@ -24,7 +26,6 @@ StatusCode InspectHitsCollectionsTool::initialize() {
     error() << "Unable to initialize Service()" << endmsg;
     return StatusCode::FAILURE;
   }
-  m_geoSvc = service("GeoSvc");
   if (!m_geoSvc) {
     error() << "Unable to locate Geometry Service. "
             << "Make sure you have GeoSvc and SimSvc in the right order in the configuration." << endmsg;
@@ -48,8 +49,8 @@ StatusCode InspectHitsCollectionsTool::finalize() { return GaudiTool::finalize()
 StatusCode InspectHitsCollectionsTool::saveOutput(const G4Event& aEvent) {
   G4HCofThisEvent* collections = aEvent.GetHCofThisEvent();
   G4VHitsCollection* collect;
-  dd4hep::sim::Geant4TrackerHit* hitT;
-  dd4hep::sim::Geant4CalorimeterHit* hitC;
+  fcc::Geant4PreDigiTrackHit* hitT;
+  fcc::Geant4CaloHit* hitC;
   info() << "Obtaining hits collections that are stored in this event:" << endmsg;
   if (collections != nullptr) {
     for (int iter_coll = 0; iter_coll < collections->GetNumberOfCollections(); iter_coll++) {
@@ -60,13 +61,13 @@ StatusCode InspectHitsCollectionsTool::saveOutput(const G4Event& aEvent) {
         size_t n_hit = collect->GetSize();
         auto decoder = m_geoSvc->lcdd()->readout(collect->GetName()).idSpec().decoder();
         for (size_t iter_hit = 0; iter_hit < n_hit; iter_hit++) {
-          hitT = dynamic_cast<dd4hep::sim::Geant4TrackerHit*>(collect->GetHit(iter_hit));
+          hitT = dynamic_cast<fcc::Geant4PreDigiTrackHit*>(collect->GetHit(iter_hit));
           if (hitT) {
             dd4hep::DDSegmentation::CellID cID = hitT->cellID;
             debug() << "hit Edep: " << hitT->energyDeposit << "\tcellID: " << cID << "\t"
                     << decoder->valueString(cID) << endmsg;
           } else {
-            hitC = dynamic_cast<dd4hep::sim::Geant4CalorimeterHit*>(collect->GetHit(iter_hit));
+          hitC = dynamic_cast<fcc::Geant4CaloHit*>(collect->GetHit(iter_hit));
             if (hitC) {
               dd4hep::DDSegmentation::CellID cID = hitC->cellID;
               debug() << "hit Edep: " << hitC->energyDeposit << "\tcellID: " << cID << "\t"

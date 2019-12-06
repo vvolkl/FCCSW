@@ -42,11 +42,16 @@ mergelayers = MergeLayers("MergeLayers",
 mergelayers.inhits.Path = "ECalHits"
 mergelayers.outhits.Path = "mergedECalHits"
 
+#Configure tools for calo cell positions                    
+from Configurables import CellPositionsDummyTool
+dummyCells = CellPositionsDummyTool("CellPositions",
+                                         OutputLevel = INFO)
 #Configure tools for calo reconstruction
 from Configurables import CalibrateCaloHitsTool, NoiseCaloCellsFromFileTool, TubeLayerPhiEtaCaloTool
 calibcells = CalibrateCaloHitsTool("CalibrateCaloHitsTool", invSamplingFraction="5.4")
 noise = NoiseCaloCellsFromFileTool("NoiseCaloCellsFromFileTool",
-    noiseFileName="/eos/project/f/fccsw-web/testsamples/fcc_ecalCellNoise_mu1000_3radialLayers_v1.root")
+                                   cellPositionsTool=dummyCells,
+    noiseFileName="root://eospublic.cern.ch//eos/experiment/fcc/hh/testsamples/fcc_ecalCellNoise_mu1000_3radialLayers_v1.root")
 
 ecalgeo = TubeLayerPhiEtaCaloTool("EcalGeo",
                                   readoutName = ecalReadoutName,
@@ -56,7 +61,7 @@ ecalgeo = TubeLayerPhiEtaCaloTool("EcalGeo",
                                   fieldValues = ecalFieldValues,
                                   # to make it working with MergeLayers algorithm
                                   activeVolumesNumber = ecalNumberOfLayers,
-                                  OutputLevel = DEBUG)
+                                  )
 
 from Configurables import CreateCaloCells
 createcells = CreateCaloCells("CreateCaloCells",
@@ -65,7 +70,8 @@ createcells = CreateCaloCells("CreateCaloCells",
                               calibTool = calibcells,
                               addCellNoise = True, filterCellNoise = False,
                               noiseTool = noise,
-                              OutputLevel = DEBUG)
+                              OutputLevel=DEBUG,
+                              )
 createcells.hits.Path="mergedECalHits"
 createcells.cells.Path="ecalBarrelCells"
 
@@ -85,7 +91,7 @@ towers = CaloTowerTool("towers",
                                hcalExtBarrelReadoutName = "",
                                hcalEndcapReadoutName = "",
                                hcalFwdReadoutName = "",
-                               OutputLevel = DEBUG)
+                               )
 towers.ecalBarrelCells.Path = "ecalBarrelCells"
 towers.ecalEndcapCells.Path = "emptyCaloCells"
 towers.ecalFwdCells.Path = "emptyCaloCells"
@@ -101,7 +107,7 @@ createclusters = CreateCaloClustersSlidingWindow("CreateCaloClusters",
                                                  nEtaDuplicates = 5, nPhiDuplicates = 11,
                                                  nEtaFinal = 7, nPhiFinal = 15,
                                                  energyThreshold = 8,
-                                                 OutputLevel = DEBUG)
+                                                 )
 createclusters.clusters.Path = "caloClusters"
 
 out = PodioOutput("output", filename = "output_ecalReco_noiseFromFile_test.root",

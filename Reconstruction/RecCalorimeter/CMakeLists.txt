@@ -20,7 +20,10 @@ include( DD4hep )
 gaudi_add_module(RecCalorimeterPlugins
                  src/components/*.cpp
                  INCLUDE_DIRS FastJet ROOT FWCore HepMC FCCEDM PODIO DD4hep DetInterface DetSegmentation Geant4 DetCommon RecInterface RecCalorimeter
-                 LINK_LIBRARIES Fastjet ROOT GaudiAlgLib FCCEDM PODIO HepMC DD4hep DetSegmentation Geant4 DetCommon)
+                 LINK_LIBRARIES FWCore Fastjet ROOT GaudiAlgLib FCCEDM PODIO HepMC DD4hep DetSegmentation Geant4 DetCommon)
+
+
+install(DIRECTORY ${CMAKE_CURRENT_LIST_DIR}/tests/options DESTINATION ${CMAKE_INSTALL_DATADIR}/${CMAKE_PROJECT_NAME}/Reconstruction/RecCalorimeter)
 
 include(CTest)
 gaudi_add_test(genJetClustering
@@ -38,7 +41,7 @@ gaudi_add_test(EcalReconstructionNoiseFromFile
                PASSREGEX "Segmentation cells  \\(Nphi, Neta, minEta\\): \\[629, 331, 1\\]" )
 
 gaudi_add_test(EcalReconstructionCheckNumClusters
-               ENVIRONMENT PYTHONPATH+=$ENV{PODIO}/python
+               ENVIRONMENT PYTHONPATH+=${PODIO_PYTHON_DIR}
                WORKING_DIRECTORY ${PROJECT_SOURCE_DIR}
                COMMAND python Reconstruction/RecCalorimeter/tests/scripts/ecalRecoCheckNumClusters.py
                DEPENDS EcalReconstructionNoiseFromFile)
@@ -72,6 +75,15 @@ gaudi_add_test(reconstructionFullCaloSystemWithNoise
                 FRAMEWORK tests/options/runFullCaloSystem_ReconstructionSW_noiseFromFile.py
                 PASSREGEX "Segmentation cells  \\(Nphi, Neta, minEta\\): \\[704, 335, 1\\]")
 
+gaudi_add_test(correctionFullCaloSystem
+                WORKING_DIRECTORY ${PROJECT_SOURCE_DIR}
+                DEPENDS reconstructionFullCaloSystem
+                FRAMEWORK tests/options/runFullCaloSystem_CorrectECalBarrelSliWinClusters.py)
+
+gaudi_add_test(estimatePileup
+                WORKING_DIRECTORY ${PROJECT_SOURCE_DIR}
+                FRAMEWORK tests/options/runPreparePileup.py)
+
 gaudi_add_test(recTopoClustersBarrelCaloSystem
                 WORKING_DIRECTORY ${PROJECT_SOURCE_DIR}
                 DEPENDS simulateFullCaloSystem
@@ -81,3 +93,8 @@ gaudi_add_test(recTopoClustersBarrelCaloSystemElecNoise
                 WORKING_DIRECTORY ${PROJECT_SOURCE_DIR}
                 DEPENDS simulateFullCaloSystem
                 FRAMEWORK tests/options/runBarrelCaloSystem_ReconstructionTopoClusters_electrNoise.py)
+
+gaudi_add_test(recSplitTopoClustersBarrelCaloSystemElecNoiseConeSelected
+                WORKING_DIRECTORY ${PROJECT_SOURCE_DIR}
+                DEPENDS simulateFullCaloSystem
+		FRAMEWORK tests/options/runBarrelCaloSystem_ReconstructionTopoClusters_electrNoise_coneSelection.py)

@@ -4,12 +4,16 @@
 // from Gaudi
 #include "GaudiAlg/GaudiTool.h"
 #include "GaudiKernel/RndmGenerators.h"
-class IRndmGenSvc;
+#include "GaudiKernel/IRndmGenSvc.h"
 
 // FCCSW
 #include "DetSegmentation/FCCSWGridPhiEta.h"
 #include "RecInterface/INoiseCaloCellsTool.h"
+#include "RecInterface/ICellPositionsTool.h"
 class IGeoSvc;
+
+//DD4hep
+#include "DDSegmentation/MultiSegmentation.h"
 
 // Root
 class TH1F;
@@ -47,9 +51,14 @@ public:
   double getNoiseConstantPerCell(int64_t aCellID);
 
 private:
+  /// Handle for tool to get cell positions
+  ToolHandle<ICellPositionsTool> m_cellPositionsTool{"CellPositionsDummyTool", this};
+
   /// Add pileup contribution to the electronics noise? (only if read from file)
   Gaudi::Property<bool> m_addPileup{this, "addPileup", true,
                                     "Add pileup contribution to the electronics noise? (only if read from file)"};
+  /// use segmentation in case no cell psotion tool defined. 
+  Gaudi::Property<bool> m_useSeg{this, "useSegmentation", true, "Specify if segmentation is used to determine cell position."};
   /// Name of the file with noise constants
   Gaudi::Property<std::string> m_noiseFileName{this, "noiseFileName", "", "Name of the file with noise constants"};
   /// Name of the detector readout
@@ -67,7 +76,6 @@ private:
       this, "filterNoiseThreshold", 3, " Energy threshold (cells with Ecell < filterThreshold*m_cellNoise removed)"};
   /// Number of radial layers
   Gaudi::Property<uint> m_numRadialLayers{this, "numRadialLayers", 3, "Number of radial layers"};
-
   /// Histograms with pileup constants (index in array - radial layer)
   std::vector<TH1F> m_histoPileupConst;
   /// Histograms with electronics noise constants (index in array - radial layer)
@@ -79,9 +87,11 @@ private:
   Rndm::Numbers m_gauss;
 
   /// Pointer to the geometry service
-  SmartIF<IGeoSvc> m_geoSvc;
+  ServiceHandle<IGeoSvc> m_geoSvc;
   /// PhiEta segmentation
-  dd4hep::DDSegmentation::FCCSWGridPhiEta* m_segmentation;
+  dd4hep::DDSegmentation::FCCSWGridPhiEta* m_segmentationPhiEta;
+  /// Multi segmentation
+  dd4hep::DDSegmentation::MultiSegmentation* m_segmentationMulti;
 };
 
 #endif /* RECCALORIMETER_NOISECALOCELLSFROMFILETOOL_H */
