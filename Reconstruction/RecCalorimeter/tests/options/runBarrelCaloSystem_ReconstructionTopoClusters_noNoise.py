@@ -28,9 +28,7 @@ podioinput = PodioInput("PodioReader", collections =  [ "ECalBarrelCells", "HCal
                         OutputLevel = DEBUG)
 
 from Configurables import GeoSvc 
-detectors_to_use =['file:Detector/DetFCChhBaseline1/compact/FCChh_DectEmptyMaster.xml',
-                   'file:Detector/DetFCChhECalInclined/compact/FCChh_ECalBarrel_withCryostat.xml',
-                   'file:Detector/DetFCChhHCalTile/compact/FCChh_HCalBarrel_TileCal.xml'
+detectors_to_use =['file:Detector/DetFCChhBaseline1/compact/FCChh_DectMaster.xml',
                    ] 
 geoservice = GeoSvc("GeoSvc", detectors = detectors_to_use, OutputLevel = INFO)
 
@@ -83,14 +81,14 @@ createTopoInput.hcalEndcapCells.Path ="emptyCaloCells"
 createTopoInput.hcalFwdCells.Path = "emptyCaloCells"
 
 readNeighboursMap =TopoCaloNeighbours("ReadNeighboursMap",
-                                      fileName = "/afs/cern.ch/work/c/cneubuse/public/FCChh/neighbours_map_segHcal.root",
+                                      fileName = "/eos/project/f/fccsw-web/testsamples/calo/neighbours_map_segHcal.root",
                                       OutputLevel = DEBUG)
 
 #Thresholds estimated from atlas, without noise !!!
 readNoisyCellsMap = TopoCaloNoisyCells(
     "ReadNoisyCellsMap",
     fileName =
-    "/afs/cern.ch/work/c/cneubuse/public/FCChh/cellNoise_map_segHcal_constNoiseLevel.root",
+    "/eos/project/f/fccsw-web/testsamples/calo/cellNoise_map_segHcal_constNoiseLevel.root",
     OutputLevel = DEBUG)
 
 createTopoClusters = CaloTopoCluster("CreateTopoClusters",
