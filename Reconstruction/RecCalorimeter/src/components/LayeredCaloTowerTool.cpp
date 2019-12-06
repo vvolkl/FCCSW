@@ -11,10 +11,10 @@
 #include "DD4hep/Detector.h"
 #include "DD4hep/Readout.h"
 
-DECLARE_TOOL_FACTORY(LayeredCaloTowerTool)
+DECLARE_COMPONENT(LayeredCaloTowerTool)
 
 LayeredCaloTowerTool::LayeredCaloTowerTool(const std::string& type, const std::string& name, const IInterface* parent)
-    : GaudiTool(type, name, parent) {
+    : GaudiTool(type, name, parent), m_geoSvc("GeoSvc", name) {
   declareProperty("cells", m_cells, "Cells to create towers from (input)");
   declareInterface<ITowerTool>(this);
 }
@@ -23,7 +23,7 @@ StatusCode LayeredCaloTowerTool::initialize() {
   if (GaudiTool::initialize().isFailure()) {
     return StatusCode::FAILURE;
   }
-  m_geoSvc = service("GeoSvc");
+  
   if (!m_geoSvc) {
     error() << "Unable to locate Geometry Service. "
             << "Make sure you have GeoSvc and SimSvc in the right order in the "
@@ -216,7 +216,7 @@ void LayeredCaloTowerTool::attachCells(float eta, float phi, uint halfEtaFin, ui
   for (const auto& cell : *cells) {
     float etaCell = m_segmentation->eta(cell.core().cellId);
     float phiCell = m_segmentation->phi(cell.core().cellId);
-    if ((abs(idEta(etaCell) - idEta(eta)) <= halfEtaFin) && (abs(idPhi(phiCell) - idPhi(phi)) <= halfPhiFin)) {
+    if ((abs(static_cast<long int>(idEta(etaCell)) - static_cast<long int>(idEta(eta))) <= halfEtaFin) && (abs(static_cast<long int>(idPhi(phiCell)) - static_cast<long int>(idPhi(phi))) <= halfPhiFin)) {
       aEdmCluster.addhits(cell);
     }
   }

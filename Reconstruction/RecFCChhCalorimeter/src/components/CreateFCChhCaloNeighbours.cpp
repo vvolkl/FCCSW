@@ -7,7 +7,7 @@
 #include "TFile.h"
 #include "TTree.h"
 
-DECLARE_SERVICE_FACTORY(CreateFCChhCaloNeighbours)
+DECLARE_COMPONENT(CreateFCChhCaloNeighbours)
 
 CreateFCChhCaloNeighbours::CreateFCChhCaloNeighbours(const std::string& aName, ISvcLocator* aSL)
     : base_class(aName, aSL) {
@@ -113,7 +113,7 @@ StatusCode CreateFCChhCaloNeighbours::initialize() {
 	extrema[2] = std::make_pair(numCells[2], numCells[1] + numCells[2] - 1);
       }
       else if(m_fieldNamesSegmented[iSys] == "system" &&
-	      m_fieldValuesSegmented[iSys] == 8){
+	      m_fieldValuesSegmented[iSys] == 8 && m_readoutNamesSegmented[iSys]=="BarHCal_Readout_phieta"){
 	uint cellsEta = ceil(( 2*m_activeVolumesEta[ilayer] - segmentation->gridSizeEta() ) / 2 / segmentation->gridSizeEta()) * 2 + 1; //ceil( 2*m_activeVolumesRadii[ilayer] / segmentation->gridSizeEta()) ;
 	uint minEtaID = int(floor(( - m_activeVolumesEta[ilayer] + 0.5 * segmentation->gridSizeEta() - segmentation->offsetEta()) / segmentation->gridSizeEta()));
 	numCells[1]=cellsEta;
@@ -442,8 +442,8 @@ StatusCode CreateFCChhCaloNeighbours::initialize() {
   }
   debug() << "cells with neighbours across Calo boundaries: " << count << endmsg;
 
-  TFile file(m_outputFileName.c_str(), "RECREATE");
-  file.cd();
+  std::unique_ptr<TFile> file(TFile::Open(m_outputFileName.c_str(), "RECREATE"));
+  file->cd();
   TTree tree("neighbours", "Tree with map of neighbours");
   uint64_t saveCellId;
   std::vector<uint64_t> saveNeighbours;
@@ -454,8 +454,8 @@ StatusCode CreateFCChhCaloNeighbours::initialize() {
     saveNeighbours = item.second;
     tree.Fill();
   }
-  file.Write();
-  file.Close();
+  file->Write();
+  file->Close();
 
   return StatusCode::SUCCESS;
 }
