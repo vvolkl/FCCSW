@@ -18,18 +18,22 @@ gaudi_install_python_modules()
 gaudi_add_module(Generation
                  src/components/*.cpp
                  INCLUDE_DIRS Generation HepMC Pythia8 FWCore FCCEDM PODIO HepPDT
-                 LINK_LIBRARIES HepMC GaudiAlgLib Pythia8 FCCEDM PODIO HepPDT)
+                 LINK_LIBRARIES HepMC GaudiAlgLib FWCore Pythia8 FCCEDM PODIO HepPDT)
 
-install(DIRECTORY ${CMAKE_CURRENT_LIST_DIR}/data DESTINATION Generation)
+install(DIRECTORY ${CMAKE_CURRENT_LIST_DIR}/data DESTINATION ${CMAKE_INSTALL_DATADIR}/${CMAKE_PROJECT_NAME}/Generation)
 
 gaudi_add_dictionary(Generation Generation/IPileUpTool.h Generation/selection.xml)
 
 include(CTest)
 
-gaudi_add_test(particleGun
+gaudi_add_test(GenParticleGun
                FRAMEWORK options/particleGun.py
                WORKING_DIRECTORY ${PROJECT_SOURCE_DIR})
 
-gaudi_add_test(PileUpReader
+gaudi_add_test(GenPileUpReader
                FRAMEWORK options/pileup_hepmcreader.py)
 
+gaudi_add_test(GenPythiaMatching
+               COMMAND  fccrun  Examples/options/pythia.py --Filename Generation/data/powheg_ggHH_events.cmd
+               WORKING_DIRECTORY ${PROJECT_SOURCE_DIR}
+              )
