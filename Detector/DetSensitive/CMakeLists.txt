@@ -12,8 +12,6 @@ include(DD4hep)
 
 find_package(ROOT COMPONENTS MathCore GenVector Geom REQUIRED)
 
-gaudi_install_headers(DetSensitive)
-
 gaudi_add_library(DetSensitive
                   src/*.cpp
                   INCLUDE_DIRS Geant4 DD4hep ROOT DetCommon
@@ -29,9 +27,6 @@ include(CTest)
 gaudi_add_test(ExternalTrackerSD
                WORKING_DIRECTORY ${PROJECT_SOURCE_DIR}/Detector/DetSensitive/tests/
                FRAMEWORK tests/options/testSimpleTrackerSD.py)
-gaudi_add_test(InternalCalorimeterSD
-               WORKING_DIRECTORY ${PROJECT_SOURCE_DIR}/Detector/DetSensitive/tests/
-               FRAMEWORK tests/options/testDd4hepCaloSD.py)
 gaudi_add_test(ExternalCalorimeterSD
                WORKING_DIRECTORY ${PROJECT_SOURCE_DIR}/Detector/DetSensitive/tests/
                FRAMEWORK tests/options/testSimpleCaloSD.py)

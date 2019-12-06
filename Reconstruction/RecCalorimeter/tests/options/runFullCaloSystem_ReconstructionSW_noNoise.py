@@ -9,13 +9,13 @@ hcalEndcapCellsName = "HCalEndcapCells"
 hcalFwdCellsName = "HCalFwdCells"
 # Readouts
 ecalBarrelReadoutName = "ECalBarrelPhiEta"
-ecalEndcapReadoutName = "EMECPhiEta"
+ecalEndcapReadoutName = "EMECPhiEtaReco"
 ecalFwdReadoutName = "EMFwdPhiEta"
 hcalBarrelReadoutName = "HCalBarrelReadout"
 hcalExtBarrelReadoutName = "HCalExtBarrelReadout"
 hcalBarrelReadoutPhiEtaName = "BarHCal_Readout_phieta"
 hcalExtBarrelReadoutPhiEtaName = "ExtBarHCal_Readout_phieta"
-hcalEndcapReadoutName = "HECPhiEta"
+hcalEndcapReadoutName = "HECPhiEtaReco"
 hcalFwdReadoutName = "HFwdPhiEta"
 # Number of events
 num_events = 3
@@ -27,7 +27,7 @@ podioevent = FCCDataSvc("EventDataSvc", input="output_fullCalo_SimAndDigi_e50GeV
 # reads HepMC text file and write the HepMC::GenEvent to the data service
 from Configurables import PodioInput
 podioinput = PodioInput("PodioReader", 
-                        collections = [ecalBarrelCellsName, ecalEndcapCellsName, ecalFwdCellsName, 
+                        collections = ["GenParticles", "GenVertices", ecalBarrelCellsName, ecalEndcapCellsName, ecalFwdCellsName, 
                                        hcalBarrelCellsName, hcalExtBarrelCellsName, hcalEndcapCellsName, hcalFwdCellsName], 
                         OutputLevel = DEBUG)
 
@@ -70,6 +70,36 @@ rewriteExtHcal = RewriteBitfield("RewriteExtHcal",
                                  inhits = "HCalExtBarrelCells",
                                  outhits = "newHCalExtBarrelCells")
 
+##############################################################################################################
+#######                                       REWRITE ENDCAP BITFIELD                            #############
+##############################################################################################################
+
+from Configurables import RewriteBitfield
+rewriteECalEC = RewriteBitfield("RewriteECalEC",
+                                # old bitfield (readout)
+                                oldReadoutName = "EMECPhiEta",
+                                # specify which fields are going to be deleted
+                                removeIds = ["sublayer"],
+                                # clusters are needed, with deposit position and cellID in bits
+                                newReadoutName = ecalEndcapReadoutName,
+                                debugPrint = 10,
+                                OutputLevel = INFO)
+rewriteECalEC.inhits.Path = "ECalEndcapCells"
+rewriteECalEC.outhits.Path = "newECalEndcapCells"
+
+rewriteHCalEC = RewriteBitfield("RewriteHCalEC",
+                                # old bitfield (readout)
+                                oldReadoutName = "HECPhiEta",
+                                # specify which fields are going to be deleted
+                                removeIds = ["sublayer"],
+                                # new bitfield (readout), with new segmentation
+                                newReadoutName = hcalEndcapReadoutName,
+                                debugPrint = 10,
+                                OutputLevel = INFO)
+# clusters are needed, with deposit position and cellID in bits
+rewriteHCalEC.inhits.Path = "HCalEndcapCells"
+rewriteHCalEC.outhits.Path = "newHCalEndcapCells"
+
 #Create calo clusters
 from Configurables import CreateCaloClustersSlidingWindow, CaloTowerTool
 from GaudiKernel.PhysicalConstants import pi
@@ -85,11 +115,11 @@ towers = CaloTowerTool("towers",
                                hcalFwdReadoutName = hcalFwdReadoutName,
                                OutputLevel = DEBUG)
 towers.ecalBarrelCells.Path = ecalBarrelCellsName
-towers.ecalEndcapCells.Path = ecalEndcapCellsName
+towers.ecalEndcapCells.Path = "newECalEndcapCells"
 towers.ecalFwdCells.Path = ecalFwdCellsName
 towers.hcalBarrelCells.Path = "newHCalBarrelCells"
 towers.hcalExtBarrelCells.Path ="newHCalExtBarrelCells"
-towers.hcalEndcapCells.Path = hcalEndcapCellsName
+towers.hcalEndcapCells.Path = "newHCalEndcapCells"
 towers.hcalFwdCells.Path = hcalFwdCellsName
 
 # Cluster variables
@@ -110,6 +140,7 @@ createClusters = CreateCaloClustersSlidingWindow("CreateClusters",
                                                  nEtaDuplicates = dupE, nPhiDuplicates = dupP,
                                                  nEtaFinal = finE, nPhiFinal = finP,
                                                  energyThreshold = threshold,
+                                                 ellipse = True,
                                                  OutputLevel = DEBUG)
 createClusters.clusters.Path = "CaloClusters"
 
@@ -130,6 +161,8 @@ ApplicationMgr(
     TopAlg = [podioinput,
               rewriteHcal,
               rewriteExtHcal,
+              rewriteECalEC,
+              rewriteHCalEC,
               createClusters,
               out
               ],

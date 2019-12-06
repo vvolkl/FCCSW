@@ -5,7 +5,7 @@
 
 
 
-DECLARE_ALGORITHM_FACTORY(PileupOverlayAlg)
+DECLARE_COMPONENT(PileupOverlayAlg)
 
 PileupOverlayAlg::PileupOverlayAlg(const std::string& aName, ISvcLocator* aSvcLoc)
     : GaudiAlgorithm(aName, aSvcLoc), m_store(), m_reader() {
@@ -26,7 +26,7 @@ StatusCode PileupOverlayAlg::initialize() {
   if (m_doShuffleInputFiles) {
     m_pileupFileIndex = static_cast<unsigned int>(m_flatDist() * m_pileupFilenames.size());
   }
-  m_reader.openFile(m_pileupFilenames[m_pileupFileIndex]);
+  m_reader.openFiles({m_pileupFilenames[m_pileupFileIndex]});
   m_store.setReader(&m_reader);
   return sc;
 }
@@ -72,9 +72,9 @@ StatusCode PileupOverlayAlg::execute() {
         m_pileupFileIndex = (m_pileupFileIndex + 1) % m_pileupFilenames.size();
       }
       m_store.clearCaches();
-      m_reader.closeFile();
+      m_reader.closeFiles();
       verbose() << "switching to pileup file " << m_pileupFilenames[m_pileupFileIndex] << endmsg;
-      m_reader.openFile(m_pileupFilenames[m_pileupFileIndex]);
+      m_reader.openFiles({m_pileupFilenames[m_pileupFileIndex]});
       nEvents = m_reader.getEntries();
     }
     m_store.clearCaches();
