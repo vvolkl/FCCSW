@@ -12,9 +12,9 @@
 #include "DD4hep/Detector.h"
 #include "DDSegmentation/Segmentation.h"
 
-DECLARE_ALGORITHM_FACTORY(RedoSegmentation)
+DECLARE_COMPONENT(RedoSegmentation)
 
-RedoSegmentation::RedoSegmentation(const std::string& aName, ISvcLocator* aSvcLoc) : GaudiAlgorithm(aName, aSvcLoc) {
+RedoSegmentation::RedoSegmentation(const std::string& aName, ISvcLocator* aSvcLoc) : GaudiAlgorithm(aName, aSvcLoc), m_geoSvc("GeoSvc", aName) {
   declareProperty("inhits", m_inHits, "Hit collection with old segmentation (input)");
   declareProperty("outhits", m_outHits, "Hit collection with modified segmentation (output)");
 }
@@ -23,7 +23,7 @@ RedoSegmentation::~RedoSegmentation() {}
 
 StatusCode RedoSegmentation::initialize() {
   if (GaudiAlgorithm::initialize().isFailure()) return StatusCode::FAILURE;
-  m_geoSvc = service("GeoSvc");
+  
   if (!m_geoSvc) {
     error() << "Unable to locate Geometry Service. "
             << "Make sure you have GeoSvc and SimSvc in the right order in the configuration." << endmsg;
@@ -94,7 +94,7 @@ StatusCode RedoSegmentation::execute() {
     // factor 10 to convert mm to cm
     dd4hep::DDSegmentation::Vector3D position(hit.position().x / 10, hit.position().y / 10, hit.position().z / 10);
     // first calculate proper segmentation fields
-    dd4hep::DDSegmentation::CellID newCellId = m_segmentation->cellID(position, position, volumeID(hit.cellId()));
+    dd4hep::DDSegmentation::CellID newCellId = m_segmentation->cellID(position, position, 0);
     // now rewrite all other fields (detector ID)
     for (const auto& detectorField : m_detectorIdentifiers) {
       oldid = m_oldDecoder->get(cellId, detectorField);
