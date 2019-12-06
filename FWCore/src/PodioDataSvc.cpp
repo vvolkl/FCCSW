@@ -5,23 +5,32 @@
 
 #include "FWCore/DataWrapper.h"
 
+#include "TTree.h"
+
 /// Service initialisation
 StatusCode PodioDataSvc::initialize() {
   // Nothing to do: just call base class initialisation
   StatusCode status = DataSvc::initialize();
   ISvcLocator* svc_loc = serviceLocator();
 
+
   // Attach data loader facility
   m_cnvSvc = svc_loc->service("EventPersistencySvc");
   status = setDataLoader(m_cnvSvc);
 
   if (m_filename != "") {
-    m_reader.openFile(m_filename);
-    m_eventMax = m_reader.getEntries();
-    auto idTable = m_reader.getCollectionIDTable();
+    m_filenames.push_back(m_filename);
+  }
 
-    setCollectionIDs(idTable);
-    m_provider.setReader(&m_reader);
+  if (m_filenames.size() > 0) {
+    if (m_filenames[0] != "") {
+      m_reader.openFiles(m_filenames);
+      m_eventMax = m_reader.getEntries();
+      auto idTable = m_reader.getCollectionIDTable();
+
+      setCollectionIDs(idTable);
+      m_provider.setReader(&m_reader);
+    }
   }
   return status;
 }
@@ -32,7 +41,7 @@ StatusCode PodioDataSvc::reinitialize() {
 }
 /// Service finalization
 StatusCode PodioDataSvc::finalize() {
-  m_cnvSvc = 0;  // release
+  m_cnvSvc = 0; // release
   DataSvc::finalize().ignore();
   return StatusCode::SUCCESS;
 }
@@ -76,7 +85,10 @@ void PodioDataSvc::setCollectionIDs(podio::CollectionIDTable* collectionIds) {
 
 /// Standard Constructor
 PodioDataSvc::PodioDataSvc(const std::string& name, ISvcLocator* svc)
-    : DataSvc(name, svc), m_collectionIDs(new podio::CollectionIDTable()) {}
+    : DataSvc(name, svc), m_collectionIDs(new podio::CollectionIDTable()) {
+
+  m_eventDataTree = new TTree("events", "Events tree");
+    }
 
 /// Standard Destructor
 PodioDataSvc::~PodioDataSvc() {}
@@ -89,10 +101,10 @@ StatusCode PodioDataSvc::readCollection(const std::string& collName, int collect
   collection->setID(id);
   wrapper->setData(collection);
   m_readCollections.emplace_back(std::make_pair(collName, collection));
-  return DataSvc::registerObject(collName, wrapper);
+  return DataSvc::registerObject("/Event", "/" + collName, wrapper);
 }
 
-StatusCode PodioDataSvc::registerObject(const std::string& fullPath, DataObject* pObject) {
+StatusCode PodioDataSvc::registerObject(std::string_view parentPath, std::string_view fullPath, DataObject* pObject) {
   DataWrapperBase* wrapper = dynamic_cast<DataWrapperBase*>(pObject);
   if (wrapper != nullptr) {
     podio::CollectionBase* coll = wrapper->collectionBase();
@@ -104,5 +116,5 @@ StatusCode PodioDataSvc::registerObject(const std::string& fullPath, DataObject*
       m_collections.emplace_back(std::make_pair(shortPath, coll));
     }
   }
-  return DataSvc::registerObject(fullPath, pObject);
+  return DataSvc::registerObject(parentPath, fullPath, pObject);
 }

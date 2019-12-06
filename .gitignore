@@ -2,6 +2,11 @@
 *.pyc
 *.root
 *.png
+*.pdf
+*.swp
+
+*.dat
+*.gdml
 
 # gaudi
 .gaudi_project_ignore
