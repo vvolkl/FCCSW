@@ -15,7 +15,7 @@ hcalBarrelReadoutName = "HCalBarrelReadout"
 hcalExtBarrelReadoutName = "HCalExtBarrelReadout"
 hcalBarrelReadoutPhiEtaName = "BarHCal_Readout_phieta"
 hcalExtBarrelReadoutPhiEtaName = "ExtBarHCal_Readout_phieta"
-hcalEndcapReadoutName = "HECPhiEta"
+hcalEndcapReadoutName = "HECPhiEtaReco"
 hcalFwdReadoutName = "HFwdPhiEta"
 # Number of events
 num_events = 3
@@ -41,10 +41,36 @@ geoservice = GeoSvc("GeoSvc", detectors=[  'file:Detector/DetFCChhBaseline1/comp
                     OutputLevel = WARNING)
 
 
-ecalBarrelNoisePath = "/eos/project/f/fccsw-web/testsamples/elecNoise_ecalBarrel_50Ohm_traces2_2shieldWidth.root"
-ecalEndcapNoisePath = "/eos/project/f/fccsw-web/testsamples/elecNoise_emec_50Ohm_2shieldWidth_6layers.root"
+ecalBarrelNoisePath = "root:://eospublic.cern.ch//eos/experiment/fcc/hh/testsamples/elecNoise_ecalBarrel_50Ohm_traces2_2shieldWidth.root"
+ecalEndcapNoisePath = "root:://eospublic.cern.ch//eos/experiment/fcc/hh/testsamples/elecNoise_emec_50Ohm_2shieldWidth_6layers.root"
 ecalBarrelNoiseHistName = "h_elecNoise_fcc_"
 ecalEndcapNoiseHistName = "h_elecNoise_fcc_"
+
+#Configure tools for calo cell positions
+from Configurables import CellPositionsECalBarrelTool, CellPositionsHCalBarrelNoSegTool, CellPositionsHCalBarrelTool, CellPositionsCaloDiscsTool, CellPositionsTailCatcherTool
+ECalBcells = CellPositionsECalBarrelTool("CellPositionsECalBarrel",
+                                         readoutName = ecalBarrelReadoutName,
+                                         OutputLevel = INFO)
+EMECcells = CellPositionsCaloDiscsTool("CellPositionsEMEC",
+                                       readoutName = ecalEndcapReadoutName,
+                                       OutputLevel = INFO)
+ECalFwdcells = CellPositionsCaloDiscsTool("CellPositionsECalFwd",
+                                          readoutName = ecalFwdReadoutName,
+                                          OutputLevel = INFO)
+HCalBcellVols = CellPositionsHCalBarrelNoSegTool("CellPositionsHCalBarrelVols",
+                                                 readoutName = "HCalBarrelReadout",
+                                                 OutputLevel = INFO)
+HCalBsegcells = CellPositionsHCalBarrelTool("CellPositionsHCalBarrel",
+                                            readoutName = "BarHCal_Readout_phieta",
+                                            radii = [291.05, 301.05, 313.55, 328.55, 343.55, 358.55, 378.55, 413.55, 428.55, 453.55],
+                                            OutputLevel = INFO)
+HECcells = CellPositionsCaloDiscsTool("CellPositionsHEC",
+                                      readoutName = hcalEndcapReadoutName,
+                                      OutputLevel = INFO)
+HCalFwdcells = CellPositionsCaloDiscsTool("CellPositionsHCalFwd",
+                                          readoutName = hcalFwdReadoutName,
+                                          OutputLevel = INFO)
+
 
 # additionally for HCal                                 
 from Configurables import RewriteBitfield
@@ -74,6 +100,37 @@ rewriteExtHcal = RewriteBitfield("RewriteExtHcal",
 rewriteExtHcal.inhits.Path = "HCalExtBarrelCells"
 rewriteExtHcal.outhits.Path = "newHCalExtBarrelCells"
 
+##############################################################################################################
+#######                                       REWRITE ENDCAP BITFIELD                            #############
+##############################################################################################################
+
+from Configurables import RewriteBitfield
+rewriteECalEC = RewriteBitfield("RewriteECalEC",
+                                # old bitfield (readout)
+                                oldReadoutName = "EMECPhiEta",
+                                # specify which fields are going to be deleted
+                                removeIds = ["sublayer"],
+                                # new bitfield (readout), with new segmentation
+                                newReadoutName = ecalEndcapReadoutName,
+                                debugPrint = 10,
+                                OutputLevel= INFO)
+# clusters are needed, with deposit position and cellID in bits
+rewriteECalEC.inhits.Path = "ECalEndcapCells"
+rewriteECalEC.outhits.Path = "newECalEndcapCells"
+
+rewriteHCalEC = RewriteBitfield("RewriteHCalEC",
+                                # old bitfield (readout)
+                                oldReadoutName = "HECPhiEta",
+                                # specify which fields are going to be deleted
+                                removeIds = ["sublayer"],
+                                # new bitfield (readout), with new segmentation
+                                newReadoutName = hcalEndcapReadoutName,
+                                debugPrint = 10,
+                                OutputLevel = INFO)
+# clusters are needed, with deposit position and cellID in bits
+rewriteHCalEC.inhits.Path = "HCalEndcapCells"
+rewriteHCalEC.outhits.Path = "newHCalEndcapCells"
+
 # add noise, create all existing cells in detector
 from Configurables import NoiseCaloCellsFromFileTool, TubeLayerPhiEtaCaloTool,CreateCaloCells
 noiseBarrel = NoiseCaloCellsFromFileTool("NoiseBarrel",
@@ -82,6 +139,7 @@ noiseBarrel = NoiseCaloCellsFromFileTool("NoiseBarrel",
                                          elecNoiseHistoName = ecalBarrelNoiseHistName,
                                          activeFieldName = "layer",
                                          addPileup = False,
+                                         cellPositionsTool = ECalBcells,
                                          numRadialLayers = 8)
 barrelGeometry = TubeLayerPhiEtaCaloTool("EcalBarrelGeo",
                                          readoutName = ecalBarrelReadoutName,
@@ -102,12 +160,13 @@ createEcalBarrelCells = CreateCaloCells("CreateECalBarrelCells",
 # add noise, create all existing cells in detector
 # currently only positive side!
 noiseEndcap = NoiseCaloCellsFromFileTool("NoiseEndcap",
-                                                 readoutName = ecalEndcapReadoutName,
-                                                 noiseFileName = ecalEndcapNoisePath,
-                                                 elecNoiseHistoName = ecalEndcapNoiseHistName,
-                                                 activeFieldName = "layer",
-                                                 addPileup = False,
-                                                 numRadialLayers = 6)
+                                         readoutName = ecalEndcapReadoutName,
+                                         noiseFileName = ecalEndcapNoisePath,
+                                         elecNoiseHistoName = ecalEndcapNoiseHistName,
+                                         activeFieldName = "layer",
+                                         addPileup = False,
+                                         cellPositionsTool = EMECcells,
+                                         numRadialLayers = 6)
 endcapGeometry = TubeLayerPhiEtaCaloTool("EcalEndcapGeo",
                                                  readoutName = ecalEndcapReadoutName,
                                                  activeVolumeName = "layerEnvelope",
@@ -120,7 +179,7 @@ createEcalEndcapCells = CreateCaloCells("CreateECalEndcapCells",
                                                 doCellCalibration=False, # already calibrated
                                                 addCellNoise=True, filterCellNoise=False,
                                                 noiseTool = noiseEndcap,
-                                                hits=ecalEndcapCellsName,
+                                                hits="newECalEndcapCells",
                                                 cells=ecalEndcapCellsName+"Noise")
 
 #Create calo clusters
@@ -181,6 +240,8 @@ ApplicationMgr(
     TopAlg = [podioinput,
               rewriteHcal,
               rewriteExtHcal,
+              rewriteECalEC,
+              rewriteHCalEC,
               createEcalBarrelCells,
               createEcalEndcapCells,
               createClusters,

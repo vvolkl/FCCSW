@@ -31,10 +31,8 @@ GridDriftChamber::GridDriftChamber(const BitFieldCoder* decoder) : Segmentation(
   registerIdentifier("identifier_phi", "Cell ID identifier for phi", m_phiID, "phi");
 }
 
-Vector3D GridDriftChamber::position(const CellID& cID) const {  //// ???? TODO
-
+Vector3D GridDriftChamber::position(const CellID& /*cID*/) const {  //// ???? TODO
   Vector3D cellPosition = {0, 0, 0};
-
   return cellPosition;
 }
 
@@ -191,13 +189,6 @@ TVector3 GridDriftChamber::IntersectionTrackWire(const CellID& cID, const TVecto
       
     }
  
-  std::cout << "------- Segmentation -------" << std::endl;
-  hit_start.Print();
-  hit_end.Print();
-  Wstart.Print();
-  Wend.Print();
-  intersect.Print();
-
   return intersect;
 }
 

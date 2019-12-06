@@ -69,7 +69,7 @@ private:
   /// Handle for calo cells (output collection)
   DataHandle<fcc::CaloHitCollection> m_cells{"cells", Gaudi::DataHandle::Writer, this};
   /// Name of the detector readout
-  Gaudi::Property<std::string> m_readoutName{this, "readoutName", "ECalHitsPhiEta", "Name of the detector readout"};
+  Gaudi::Property<std::string> m_readoutName{this, "readoutName", "ECalBarrelPhiEta", "Name of the detector readout"};
   /// Name of active volumes
   Gaudi::Property<std::string> m_activeVolumeName{this, "activeVolumeName", "_sensitive", "Name of the active volumes"};
   /// Name of active layers for sampling calorimeter
@@ -97,7 +97,7 @@ private:
   bool m_useVolumeIdOnly;
 
   /// Pointer to the geometry service
-  SmartIF<IGeoSvc> m_geoSvc;
+  ServiceHandle<IGeoSvc> m_geoSvc;
   /// Map of cell IDs (corresponding to DD4hep IDs) and energy
   std::unordered_map<uint64_t, double> m_cellsMap;
 };
