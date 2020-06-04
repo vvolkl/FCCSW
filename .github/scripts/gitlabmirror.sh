@@ -5,7 +5,8 @@ set -u
 DEFAULT_POLL_TIMEOUT=10
 POLL_TIMEOUT=${POLL_TIMEOUT:-$DEFAULT_POLL_TIMEOUT}
 
-#git checkout "${GITHUB_REF:11}"
+echo ${GITHUB_REF}
+git checkout "${GITHUB_REF}"
 
 #branch=${GITHUB_REPOSITORY}/$(git symbolic-ref --short HEAD)
 shortbranch=$(git symbolic-ref --short HEAD)
