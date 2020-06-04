@@ -5,7 +5,6 @@ Common software for all FCC experiments.
 This software is based on Gaudi.
 
 
-
 Installation
 ------------
 
