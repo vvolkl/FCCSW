@@ -1,6 +1,6 @@
-#!/bin/sh
+#!/bin/bash
 
-set -u
+#set -u
 
 DEFAULT_POLL_TIMEOUT=10
 POLL_TIMEOUT=${POLL_TIMEOUT:-$DEFAULT_POLL_TIMEOUT}
@@ -11,12 +11,12 @@ git checkout "${GITHUB_REF}"
 #branch=${GITHUB_REPOSITORY}/$(git symbolic-ref --short HEAD)
 shortbranch=$(git symbolic-ref --short HEAD)
 
-sh -c "git config --global credential.username $GITLAB_USERNAME"
-sh -c "git config --global core.askPass /cred-helper.sh"
-sh -c "git config --global credential.helper cache"
-sh -c "git remote add mirror $GITLAB_URL"
-sh -c "echo pushing to $shortbranch branch at $(git remote get-url --push mirror)"
-sh -c "git push mirror $shortbranch"
+git config --global credential.username $GITLAB_USERNAME
+git config --global core.askPass /cred-helper.sh
+git config --global credential.helper cache
+git remote add mirror $GITLAB_URL
+echo pushing to $shortbranch branch at $(git remote get-url --push mirror)
+git push mirror $shortbranch
 
 sleep $POLL_TIMEOUT
 
