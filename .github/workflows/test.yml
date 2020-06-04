@@ -6,7 +6,7 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v1
+    - uses: actions/checkout@v2
     - name: Mirror + trigger CI
       env:
         GITLAB_URL: "https://gitlab.cern.ch/vavolkl/FCCSW"

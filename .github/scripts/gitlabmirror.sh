@@ -6,7 +6,11 @@ DEFAULT_POLL_TIMEOUT=10
 POLL_TIMEOUT=${POLL_TIMEOUT:-$DEFAULT_POLL_TIMEOUT}
 
 echo ${GITHUB_REF}
-git checkout "${GITHUB_REF}"
+# leave ancient history undisturbed
+git fetch --shallow-since=01/01/2020
+
+#github_ref
+#git checkout "${GITHUB_REF}"
 
 #branch=${GITHUB_REPOSITORY}/$(git symbolic-ref --short HEAD)
 shortbranch=$(git symbolic-ref --short HEAD)
