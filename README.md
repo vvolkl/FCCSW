@@ -33,7 +33,7 @@ Test
 ----
 
 ~~~{.sh}
-./run fccrun.py Examples/options/example_options.py
+./run fccrun Examples/options/example_options.py
 ~~~
 
 you can also specify some options like number of events and output file
