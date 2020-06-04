@@ -17,5 +17,6 @@ jobs:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         POLL_TIMEOUT: 25
       run: |
-        ls
-        .github/scripts/gitlabmirror.sh
+        ls -alh
+        git status
+        ./.github/scripts/gitlabmirror.sh
