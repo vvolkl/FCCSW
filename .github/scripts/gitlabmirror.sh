@@ -24,7 +24,7 @@ shortbranch=$(git symbolic-ref --short HEAD)
 
 
 # need a token with api acces
-curl -X POST  --header "PRIVATE-TOKEN: ${GITLAB_PASSWORD2}" https://${GITLAB_HOSTNAME}/api/v4/projects/${GITLAB_PROJECT_ID}/mirror/pull
+curl --silent   --header "PRIVATE-TOKEN: ${GITLAB_PASSWORD2}" -X https://${GITLAB_HOSTNAME}/api/v4/projects/${GITLAB_PROJECT_ID}/mirror/pull
 
 sleep $POLL_TIMEOUT
 
