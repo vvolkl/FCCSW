@@ -14,6 +14,7 @@
 
 #include "G4ClassicalRK4.hh"
 #include "G4HelixExplicitEuler.hh"
+#include "G4ExactHelixStepper.hh"
 #include "G4HelixImplicitEuler.hh"
 #include "G4HelixSimpleRunge.hh"
 #include "G4MagIntegratorStepper.hh"
@@ -48,9 +49,9 @@ StatusCode SimG4ConstantMagneticFieldTool::initialize() {
         new sim::ConstantField(m_fieldComponentX, m_fieldComponentY, m_fieldComponentZ, m_fieldRadMax, m_fieldZMax);
     fieldManager->SetDetectorField(m_field);
 
-    fieldManager->CreateChordFinder(m_field);
-    G4ChordFinder* chordFinder = fieldManager->GetChordFinder();
-    chordFinder->GetIntegrationDriver()->RenewStepperAndAdjust(stepper(m_integratorStepper, m_field)); 
+    G4ChordFinder* chordFinder = 
+    new G4ChordFinder( m_field,  m_minStep, stepper(m_integratorStepper, m_field));
+    fieldManager->SetChordFinder(chordFinder);
 
     propagator->SetLargestAcceptableStep(m_maxStep);
 
@@ -81,6 +82,8 @@ G4MagIntegratorStepper* SimG4ConstantMagneticFieldTool::stepper(const std::strin
     return new G4NystromRK4(fEquation);
   else if (name == "ClassicalRK4")
     return new G4ClassicalRK4(fEquation);
+  else if (name == "ExactHelix")
+    return new G4ExactHelixStepper(fEquation);
   else {
     error() << "Stepper " << name << " not available! returning NystromRK4!" << endmsg;
     return new G4NystromRK4(fEquation);

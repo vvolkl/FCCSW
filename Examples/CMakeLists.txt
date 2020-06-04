@@ -7,16 +7,17 @@ gaudi_subdir(Examples v1r0)
 gaudi_depends_on_subdirs(GaudiAlg FWCore Sim/SimG4Interface Detector/DetInterface Detector/DetCommon)
 
 find_package(ROOT COMPONENTS MathCore GenVector Geom)
-find_package(DD4hep)
-find_package(Geant4)
+
+
 
 install(DIRECTORY ${CMAKE_CURRENT_LIST_DIR}/options DESTINATION ${CMAKE_INSTALL_DATADIR}/${CMAKE_PROJECT_NAME}/Examples)
 
 gaudi_add_module(Examples
                  src/*.cpp
 		             INCLUDE_DIRS ROOT GaudiKernel Geant4 DD4hep SimG4Interface DetInterface DetCommon
-                 LINK_LIBRARIES GaudiAlgLib FWCore DetCommon ROOT GaudiKernel DD4hep Geant4
+                 LINK_LIBRARIES GaudiAlgLib FWCore DetCommon ROOT GaudiKernel DD4hep
                  )
+target_link_libraries(Examples ${Geant4_LIBRARIES})
 
 
 include(CTest)

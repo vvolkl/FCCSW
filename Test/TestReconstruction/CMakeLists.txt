@@ -1,20 +1,24 @@
+if(NOT BUILD_TESTING)
+  return()
+endif()
 ################################################################################
 # Package: TestReconstruction
 ################################################################################
 gaudi_subdir(TestReconstruction v1r0)
 
 gaudi_depends_on_subdirs(GaudiAlg FWCore Detector/DetInterface Detector/DetCommon Detector/DetSegmentation)
-find_package(Geant4)
+
 
 find_package(ROOT COMPONENTS Geom)
 find_package(Acts COMPONENTS Core)
-find_package(DD4hep)
+
 
 
 gaudi_add_module(TestReconstructionPlugins
                  src/*.cpp
                  INCLUDE_DIRS FWCore DetInterface TrackingUtils Geant4 DetCommon DetSegmentation GaudiKernel ActsCore
-                 LINK_LIBRARIES FWCore GaudiAlgLib FWCore Geant4 TrackingUtils DetCommon DetSegmentation ActsCore)
+                 LINK_LIBRARIES FWCore GaudiAlgLib FWCore TrackingUtils DetCommon DetSegmentation ActsCore)
+target_link_libraries(TestReconstructionPlugins ${Geant4_LIBRARIES})
 
 include(CTest)
 gaudi_add_test(LookForNeighbours

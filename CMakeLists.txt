@@ -1,5 +1,6 @@
 CMAKE_MINIMUM_REQUIRED(VERSION 2.8.5)
 
+option(FCCSW_PAPAS "Whether to build Papas." OFF)
 option(SAS "Whether to run static code analysis with SAS." OFF)
 if (SAS)
     find_package(sas)
@@ -10,11 +11,20 @@ if (SAS)
         )
 endif(SAS)
 
+option(ENABLE_CPACK "Whether to enable CPack." OFF)
+if(ENABLE_CPACK)
+  include(CPack)
+  include(cmake/FCCSWCPack.cmake)
+endif()
+
 
 #---------------------------------------------------------------
 # to use ROOT targets, find_package ROOT must come before find_package Gaudi
 # (for now) # see issue Gaudi#103
-find_package(ROOT COMPONENTS Geom)
+find_package(ROOT COMPONENTS MathCore GenVector Geom REQUIRED)
+find_package(DD4hep COMPONENTS DDG4 DDRec REQUIRED)
+find_package(Geant4)
+
 
 # Load macros and functions for Gaudi-based projects
 find_package(GaudiProject)
@@ -61,5 +71,9 @@ install(FILES ${CMAKE_BINARY_DIR}/setup.sh
                     GROUP_READ
                     WORLD_READ)
 
+
+
 gaudi_project(FCCSW  v0r12
               USE Gaudi v32r2 )
+
+

@@ -6,9 +6,9 @@ gaudi_subdir(DetFCChhTrackerTkLayout v1r0)
 gaudi_depends_on_subdirs(GaudiKernel Detector/DetCommon)
 
 
-find_package(DD4hep)
+
 find_package(Eigen)
-find_package(Geant4)
+
 find_package(Acts COMPONENTS Core IdentificationPlugin TGeoPlugin DD4hepPlugin DigitizationPlugin)
 
 #include( DD4hep )
@@ -21,7 +21,7 @@ install(DIRECTORY ${CMAKE_CURRENT_LIST_DIR}/triplet DESTINATION ${CMAKE_INSTALL_
 gaudi_add_module(DetFCChhTrackerTkLayout
                  src/*.cpp
                  INCLUDE_DIRS FWCore DD4hep ROOT Geant4 DetCommon Eigen  Acts
-                 LINK_LIBRARIES FWCore GaudiKernel DD4hep ROOT Geant4 DetCommon ActsCore ActsDD4hepPlugin)
+                 LINK_LIBRARIES FWCore GaudiKernel DD4hep ROOT DetCommon ActsCore ActsDD4hepPlugin)
 
 set(LIBRARY_OUTPUT_PATH ${CMAKE_LIBRARY_OUTPUT_DIRECTORY})
 message(STATUS "LIBRARY_OUTPUT_PATH -> ${LIBRARY_OUTPUT_PATH}")

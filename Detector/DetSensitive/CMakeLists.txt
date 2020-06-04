@@ -5,8 +5,8 @@ gaudi_subdir(DetSensitive v1r0)
 
 gaudi_depends_on_subdirs(GaudiKernel Detector/DetCommon)
 
-find_package(DD4hep COMPONENTS DDG4 REQUIRED)
-find_package(Geant4)
+
+
 include(${Geant4_USE_FILE})
 include(DD4hep)
 
@@ -15,8 +15,9 @@ find_package(ROOT COMPONENTS MathCore GenVector Geom REQUIRED)
 gaudi_add_library(DetSensitive
                   src/*.cpp
                   INCLUDE_DIRS Geant4 DD4hep ROOT DetCommon
-                  LINK_LIBRARIES GaudiKernel DetCommon Geant4 DD4hep ROOT
+                  LINK_LIBRARIES GaudiKernel DetCommon DD4hep ROOT
                   PUBLIC_HEADERS DetSensitive)
+target_link_libraries(DetSensitive ${Geant4_LIBRARIES})
 
 set(CMAKE_MODULE_PATH  ${CMAKE_MODULE_PATH}  ${DD4hep_ROOT}/cmake )
 

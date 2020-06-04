@@ -6,9 +6,8 @@ gaudi_subdir(SimG4Components v1r0)
 # this declaration will not be needed in the future
 gaudi_depends_on_subdirs(GaudiAlg FWCore Sim/SimG4Common Detector/DetInterface Sim/SimG4Interface Detector/DetCommon)
 
-find_package(Geant4)
+
 include(${Geant4_USE_FILE})
-find_package(DD4hep COMPONENTS DDG4)
 find_package(ROOT COMPONENTS MathCore GenVector Geom REQUIRED)
 
 gaudi_install_python_modules()
@@ -16,7 +15,8 @@ gaudi_install_python_modules()
 gaudi_add_module(SimG4Components
                  src/*.cpp
                  INCLUDE_DIRS Geant4 FWCore SimG4Common SimG4Interface DetCommon  DD4hep ROOT
-                 LINK_LIBRARIES GaudiAlgLib Geant4 FWCore SimG4Common DetCommon  DD4hep ROOT)
+                 LINK_LIBRARIES GaudiAlgLib FWCore SimG4Common DetCommon  DD4hep ROOT)
+target_link_libraries(SimG4Components ${Geant4_LIBRARIES})
 
 
 include(CTest)
@@ -41,10 +41,10 @@ gaudi_add_test(GeantFullSimMoreEventsCheckNumParticles
 gaudi_add_test(GeantFastSimSimpleSmearing
                WORKING_DIRECTORY ${PROJECT_SOURCE_DIR}/Sim/SimG4Components/tests/
                FRAMEWORK tests/options/geant_fastsim_simple.py)
-gaudi_add_test(GeantFastSimSimpleSmearingCheckSigma
-               WORKING_DIRECTORY ${PROJECT_SOURCE_DIR}/Sim/SimG4Components/tests/
+add_test(      NAME  SimG4Components.GeantFastSimSimpleSmearingCheckSigma
                COMMAND python ./scripts/geant_fastsim_simple_checkSigma.py
-               DEPENDS GeantFastSimSimpleSmearing)
+               WORKING_DIRECTORY ${PROJECT_SOURCE_DIR}/Sim/SimG4Components/tests/ )
+set_tests_properties(SimG4Components.GeantFastSimSimpleSmearingCheckSigma PROPERTIES DEPENDS SimG4Components.GeantFastSimSimpleSmearing)
 gaudi_add_test(GeantFastSimSimpleSmearingCheckNumParticles
                ENVIRONMENT PYTHONPATH+=${PODIO_PYTHON_DIR}
                WORKING_DIRECTORY ${PROJECT_SOURCE_DIR}/Sim/SimG4Components/tests/
