@@ -15,12 +15,15 @@ git fetch --shallow-since=01/01/2020
 #branch=${GITHUB_REPOSITORY}/$(git symbolic-ref --short HEAD)
 shortbranch=$(git symbolic-ref --short HEAD)
 
-git config --global credential.username $GITLAB_USERNAME
-git config --global core.askPass .github/scripts/cred-helper.sh
-git config --global credential.helper cache
-git remote add mirror $GITLAB_URL
-echo pushing to $shortbranch branch at $(git remote get-url --push mirror)
-git push mirror $shortbranch
+#git config --global credential.username $GITLAB_USERNAME
+#git config --global core.askPass .github/scripts/cred-helper.sh
+#git config --global credential.helper cache
+#git remote add mirror $GITLAB_URL
+#echo pushing to $shortbranch branch at $(git remote get-url --push mirror)
+#git push mirror $shortbranch
+
+
+curl -X POST  --header "PRIVATE-TOKEN: ${GITLAB_TOKEN}" https://${GITLAB_HOSTNAME}/api/v4/projects/${GITLAB_PROJECT_ID}/mirror/pull
 
 sleep $POLL_TIMEOUT
 
