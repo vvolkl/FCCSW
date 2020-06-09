@@ -9,10 +9,8 @@ jobs:
     - uses: actions/checkout@v2
     - name: Mirror + trigger CI
       env:
-        GITLAB_URL: "https://gitlab.cern.ch/vavolkl/FCCSW"
+        GITLAB_URL: "https://gitlab.cern.ch/HEP-FCC/FCCSW"
         GITLAB_HOSTNAME: "gitlab.cern.ch"
-        GITLAB_USERNAME: "vavolkl"
-        GITLAB_PASSWORD: ${{ secrets.GITLAB_PASSWORD }}
         GITLAB_PASSWORD2: ${{ secrets.GITLAB_PASSWORD2 }}
         GITLAB_PROJECT_ID: 93907
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
