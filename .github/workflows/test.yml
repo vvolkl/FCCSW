@@ -13,6 +13,7 @@ jobs:
         sudo dpkg -i cvmfs-release-latest_all.deb
         sudo apt-get update
         sudo apt-get install cvmfs cvmfs-config-default
+        sudo cvmfs_config setup
         echo "CVMFS_QUOTA_LIMIT='32140'" > default.local
         echo "CVMFS_HTTP_PROXY=DIRECT" >> default.local
         echo "CVMFS_CACHE_BASE='/var/lib/cvmfs'" >> default.local
@@ -21,7 +22,7 @@ jobs:
         echo "CVMFS_SEND_INFO_HEADER=no" >> default.local
         sudo mkdir -p /etc/cvmfs
         sudo mv default.local /etc/cvmfs/default.local
-        sudo cvmfs_config setup
+        sudo cvmfs_config probe
         ls /cvmfs/sft.cern.ch
         ls /cvmfs/fcc.cern.ch
         ls /cvmfs/geant4.cern.ch/share/data/
