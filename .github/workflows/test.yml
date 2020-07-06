@@ -26,9 +26,14 @@ jobs:
         ls /cvmfs/fcc.cern.ch
         ls /cvmfs/geant4.cern.ch/share/data/
         ls /cvmfs/geant4.cern.ch/share/data/G4ENSDFSTATE2.2
+        export CVMFS_REPOS="-v /cvmfs/sft.cern.ch:/cvmfs/sft.cern.ch"
+        export CVMFS_REPOS="${CVMFS_REPOS} -v /cvmfs/sw-nightlies.hsf.org:/cvmfs/sw-nightlies.hsf.org"
+        export CVMFS_REPOS="${CVMFS_REPOS} -v /cvmfs/geant4.cern.ch:/cvmfs/geant4.cern.ch"
+        export CVMFS_REPOS="${CVMFS_REPOS} -v /cvmfs/fcc.cern.ch:/cvmfs/fcc.cern.ch"
+
     - name: Start container
       run: |
-        docker run -it --name CI_container -v ${GITHUB_WORKSPACE}:/Package  -v /cvmfs:/cvmfs -d clicdp/cc7-lcg /bin/bash
+        docker run -it --name CI_container -v ${GITHUB_WORKSPACE}:/Package ${CVMFS_REPOS} -d clicdp/cc7-lcg /bin/bash
     - name: Compile and test
       run: |
         docker exec CI_container /bin/bash -c "ln -s /usr/lib64/liblzma.so.5.2.2 /usr/lib64/liblzma.so; ./Package/.github/scripts/compile_and_test.sh"
