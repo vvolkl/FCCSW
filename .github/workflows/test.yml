@@ -18,8 +18,9 @@ jobs:
         echo "CVMFS_HTTP_PROXY=DIRECT" >> default.local
         echo "CVMFS_CACHE_BASE='/var/lib/cvmfs'" >> default.local
         echo "CVMFS_FORCE_SIGNING='yes'" >> default.local
+        echo "CVMFS_FOLLOW_REDIRECTS='yes'" >> default.local
         echo "CVMFS_REPOSITORIES='sw.hsf.org,sw-nightlies.hsf.org,fcc.cern.ch,sft-nightlies.cern.ch,sft.cern.ch,geant4.cern.ch'" >> default.local
-        #echo "CVMFS_SEND_INFO_HEADER=no" >> default.local
+        echo "CVMFS_SEND_INFO_HEADER=no" >> default.local
         sudo mkdir -p /etc/cvmfs
         sudo mv default.local /etc/cvmfs/default.local
         sudo cvmfs_config probe
