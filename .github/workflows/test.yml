@@ -31,4 +31,4 @@ jobs:
         docker run -it --name CI_container -v ${GITHUB_WORKSPACE}:/Package  -v /cvmfs:/cvmfs -d clicdp/cc7-lcg /bin/bash
     - name: Compile and test
       run: |
-        docker exec CI_container /bin/bash -c "ln -s /usr/lib64/liblzma.so.5.2.2 /usr/lib64/liblzma.so; ls $G4ENSDFSTATEDATA; ./Package/.github/scripts/compile_and_test.sh"
+        docker exec CI_container /bin/bash -c "ln -s /usr/lib64/liblzma.so.5.2.2 /usr/lib64/liblzma.so; cp $G4ENSDFSTATEDATA/* ./Package; export $G4ENSDFSTATEDATA=$PWD/Package; ./Package/.github/scripts/compile_and_test.sh"
