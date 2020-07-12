@@ -28,7 +28,7 @@ jobs:
         ls /cvmfs/fcc.cern.ch
         ls /cvmfs/geant4.cern.ch/share/data/
         ls /cvmfs/geant4.cern.ch/share/data/G4ENSDFSTATE2.2
-        /cvmfs/sft.cern.ch/lcg/views/LCG_97_FCC_2/x86_64-centos7-gcc8-opt/bin/geant4-config
+        /cvmfs/sft.cern.ch/lcg/views/LCG_97_FCC_2/x86_64-centos7-gcc8-opt/bin/geant4-config --datasets
         #export CVMFS_REPOS="-v /cvmfs/sft.cern.ch:/cvmfs/sft.cern.ch"
         #export CVMFS_REPOS="${CVMFS_REPOS} -v /cvmfs/sw-nightlies.hsf.org:/cvmfs/sw-nightlies.hsf.org"
         #export CVMFS_REPOS="${CVMFS_REPOS} -v /cvmfs/sw.hsf.org:/cvmfs/sw.hsf.org"
@@ -47,4 +47,4 @@ jobs:
     - name: Compile and test
       run: |
         #docker exec CI_container /bin/bash -c "ln -s /usr/lib64/liblzma.so.5.2.2 /usr/lib64/liblzma.so; ./Package/.github/scripts/compile_and_test.sh"
-        docker exec CI_container /bin/bash -c "ln -s /usr/lib64/liblzma.so.5.2.2 /usr/lib64/liblzma.so;cd ./Package; ls -alh /cvmfs/geant4.cern.ch/share/data; ls -alh /cvmfs/geant4.cern.ch/; /cvmfs/sft.cern.ch/lcg/views/LCG_97_FCC_2/x86_64-centos7-gcc8-opt/bin/geant4-config; source init.sh; ls -alh $G4PARTICLEXSDATA; echo 'try datasets'; /cvmfs/sft.cern.ch/lcg/views/LCG_97_FCC_2/x86_64-centos7-gcc8-opt/bin/geant4-config --datasets; echo 'try vars'; echo $G4PARTICLEXSDATA"
+        docker exec CI_container /bin/bash -c "ln -s /usr/lib64/liblzma.so.5.2.2 /usr/lib64/liblzma.so;cd ./Package; ls -alh /cvmfs/geant4.cern.ch/share/data; ls -alh /cvmfs/geant4.cern.ch/; /cvmfs/sft.cern.ch/lcg/views/LCG_97_FCC_2/x86_64-centos7-gcc8-opt/bin/geant4-config --datasets; source init.sh; ls -alh $G4PARTICLEXSDATA; echo 'try datasets'; /cvmfs/sft.cern.ch/lcg/views/LCG_97_FCC_2/x86_64-centos7-gcc8-opt/bin/geant4-config --datasets; echo 'try vars'; echo $G4PARTICLEXSDATA"
