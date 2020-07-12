@@ -5,9 +5,9 @@ source init.sh
 ls /cvmfs/geant4.cern.ch/share/data/G4ENSDFSTATE2.2
 ls $G4ENSDFSTATEDATA
 mkdir geant4data
-cp $G4ENSDFSTATEDATA/* ./geant4data; export G4ENSDFSTATEDATA=$PWD/geant4data; 
-cp $G4PARTICLEXSDATA/* ./geant4data; export G4PARTICLEXSDATA=$PWD/geant4data; 
-cp $G4LEDATA/* ./geant4data; export G4LEDATA=$PWD/geant4data; 
+cp -r $G4ENSDFSTATEDATA/* ./geant4data; export G4ENSDFSTATEDATA=$PWD/geant4data; 
+cp -r $G4PARTICLEXSDATA/* ./geant4data; export G4PARTICLEXSDATA=$PWD/geant4data; 
+cp -r $G4LEDATA/* ./geant4data; export G4LEDATA=$PWD/geant4data; 
 
 mkdir build install
 cd build
