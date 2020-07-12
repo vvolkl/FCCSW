@@ -4,7 +4,10 @@ cd /Package
 source init.sh
 ls /cvmfs/geant4.cern.ch/share/data/G4ENSDFSTATE2.2
 ls $G4ENSDFSTATEDATA
-#cp $G4ENSDFSTATEDATA/* ./; export G4ENSDFSTATEDATA=$PWD; 
+mkdir geant4data
+cp $G4ENSDFSTATEDATA/* ./geant4data; export G4ENSDFSTATEDATA=$PWD/geant4data; 
+cp $G4PARTICLEXSDATA/* ./geant4data; export G4PARTICLEXSDATA=$PWD/geant4data; 
+
 mkdir build install
 cd build
 cmake -DCMAKE_INSTALL_PREFIX=../install -DCMAKE_CXX_STANDARD=17  .. && \
