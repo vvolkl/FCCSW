@@ -60,3 +60,7 @@ fi
 export Gaudi_DIR=/cvmfs/sft.cern.ch/lcg/releases/Gaudi/v33r1-36bcc/x86_64-centos7-gcc8-opt/
 add_to_path CMAKE_PREFIX_PATH $Gaudi_DIR
 
+
+# TEMPORARY: issue with github actions
+export G4ENSDFSTATEDATA=/cvmfs/geant4.cern.ch/share/data/G4ENSDFSTATE2.2
+export G4PARTICLEXSDATA=/cvmfs/geant4.cern.ch/share/data/G4PARTICLEXS2.1
