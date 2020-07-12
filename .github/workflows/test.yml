@@ -46,4 +46,4 @@ jobs:
     - name: Compile and test
       run: |
         #docker exec CI_container /bin/bash -c "ln -s /usr/lib64/liblzma.so.5.2.2 /usr/lib64/liblzma.so; ./Package/.github/scripts/compile_and_test.sh"
-        docker exec CI_container /bin/bash -c "ln -s /usr/lib64/liblzma.so.5.2.2 /usr/lib64/liblzma.so;cd ./Package; ls -alh /cvmfs/geant4.cern.ch/share/data; ls -alh /cvmfs/geant4.cern.ch/; source init.sh; ls -alh $G4PARTICLEXSDATA; echo 'try datasets'; /cvmfs/sft.cern.ch/lcg/views/LCG_97_FCC_2/x86_64-centos7-gcc8-opt/bin/geant4-config --datasets"
+        docker exec CI_container /bin/bash -c "ln -s /usr/lib64/liblzma.so.5.2.2 /usr/lib64/liblzma.so;cd ./Package; ls -alh /cvmfs/geant4.cern.ch/share/data; ls -alh /cvmfs/geant4.cern.ch/; source init.sh; ls -alh $G4PARTICLEXSDATA; echo 'try datasets'; /cvmfs/sft.cern.ch/lcg/views/LCG_97_FCC_2/x86_64-centos7-gcc8-opt/bin/geant4-config --datasets; echo 'try vars'; echo $G4PARTICLEXSDATA"
