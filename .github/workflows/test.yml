@@ -33,6 +33,12 @@ jobs:
         #export CVMFS_REPOS="${CVMFS_REPOS} -v /cvmfs/sw.hsf.org:/cvmfs/sw.hsf.org"
         #export CVMFS_REPOS="${CVMFS_REPOS} -v /cvmfs/geant4.cern.ch:/cvmfs/geant4.cern.ch"
         #export CVMFS_REPOS="${CVMFS_REPOS} -v /cvmfs/fcc.cern.ch:/cvmfs/fcc.cern.ch"
+        shopt -s extglob dotglob
+        mkdir Package
+        mv !(Package) Package
+        shopt -u dotglob
+        export PKGDIR=${PWD}/Package
+
 
     - name: Start container
       run: |
